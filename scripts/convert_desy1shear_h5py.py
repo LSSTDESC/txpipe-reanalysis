@@ -15,11 +15,23 @@ d = desy1_mcal[1].data
 
 desy1_bpz = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ.fits')
 meanz = desy1_bpz[1].data['mean_z']
+desy1_bpz_1p = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ_1p.fits')
+meanz_1p = desy1_bpz_1p[1].data['mean_z']
+desy1_bpz_1m = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ_1m.fits')
+meanz_1m = desy1_bpz_1m[1].data['mean_z']
+desy1_bpz_2p = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ_2p.fits')
+meanz_2p = desy1_bpz_2p[1].data['mean_z']
+desy1_bpz_2m = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ_2m.fits')
+meanz_2m = desy1_bpz_2m[1].data['mean_z']
 
 #Sorting by coadd_id
 index_sort = np.argsort(d['coadd_objects_id'])
 d = d[index_sort]
 meanz = meanz[index_sort]
+meanz_1p = meanz_1p[index_sort]
+meanz_1m = meanz_1m[index_sort]
+meanz_2p = meanz_2p[index_sort]
+meanz_2m = meanz_2m[index_sort]
 
 #Getting the fluxes
 flux_r     = d['flux_r']
@@ -111,7 +123,7 @@ tilename = np.array([a.encode('utf8') for a in tilename])
 #Saving the data as h5file
 data = [dec, mcal_T, mcal_T_1m, mcal_T_1p, mcal_T_2m, mcal_T_2p, mcal_flags, mcal_g1, mcal_g1_1m, mcal_g1_1p, mcal_g1_2m, mcal_g1_2p, mcal_g2, mcal_g2_1m, mcal_g2_1p, mcal_g2_2m, mcal_g2_2p, mcal_mag_err_i, mcal_mag_err_i_1m, mcal_mag_err_i_1p, mcal_mag_err_i_2m, mcal_mag_err_i_2p, mcal_mag_err_r, mcal_mag_err_r_1m, mcal_mag_err_r_1p, mcal_mag_err_r_2m, mcal_mag_err_r_2p, mcal_mag_err_z, mcal_mag_err_z_1m, mcal_mag_err_z_1p, mcal_mag_err_z_2m, mcal_mag_err_z_2p, mcal_mag_i, mcal_mag_i_1m, mcal_mag_i_1p, mcal_mag_i_2m, mcal_mag_i_2p, mcal_mag_r, mcal_mag_r_1m, mcal_mag_r_1p, mcal_mag_r_2m, mcal_mag_r_2p, mcal_mag_z, mcal_mag_z_1m, mcal_mag_z_1p, mcal_mag_z_2m, mcal_mag_z_2p, mcal_psf_T_mean, mcal_psf_g1, mcal_psf_g2, mcal_s2n, mcal_s2n_1m, mcal_s2n_1p, mcal_s2n_2m, mcal_s2n_2p, objectId, ra, snr_i, snr_r, snr_z, tilename, region, meanz]
 
-dnames = ['dec', 'mcal_T', 'mcal_T_1m', 'mcal_T_1p', 'mcal_T_2m', 'mcal_T_2p', 'mcal_flags', 'mcal_g1', 'mcal_g1_1m', 'mcal_g1_1p', 'mcal_g1_2m', 'mcal_g1_2p', 'mcal_g2', 'mcal_g2_1m', 'mcal_g2_1p', 'mcal_g2_2m', 'mcal_g2_2p', 'mcal_mag_err_i', 'mcal_mag_err_i_1m', 'mcal_mag_err_i_1p', 'mcal_mag_err_i_2m', 'mcal_mag_err_i_2p', 'mcal_mag_err_r', 'mcal_mag_err_r_1m', 'mcal_mag_err_r_1p', 'mcal_mag_err_r_2m', 'mcal_mag_err_r_2p', 'mcal_mag_err_z', 'mcal_mag_err_z_1m', 'mcal_mag_err_z_1p', 'mcal_mag_err_z_2m', 'mcal_mag_err_z_2p', 'mcal_mag_i', 'mcal_mag_i_1m', 'mcal_mag_i_1p', 'mcal_mag_i_2m', 'mcal_mag_i_2p', 'mcal_mag_r', 'mcal_mag_r_1m', 'mcal_mag_r_1p', 'mcal_mag_r_2m', 'mcal_mag_r_2p', 'mcal_mag_z', 'mcal_mag_z_1m', 'mcal_mag_z_1p', 'mcal_mag_z_2m', 'mcal_mag_z_2p', 'mcal_psf_T_mean', 'mcal_psf_g1', 'mcal_psf_g2', 'mcal_s2n', 'mcal_s2n_1m', 'mcal_s2n_1p', 'mcal_s2n_2m', 'mcal_s2n_2p', 'objectId', 'ra', 'snr_i', 'snr_r', 'snr_z', 'tilename', 'region', 'mean_z'] 
+dnames = ['dec', 'mcal_T', 'mcal_T_1m', 'mcal_T_1p', 'mcal_T_2m', 'mcal_T_2p', 'mcal_flags', 'mcal_g1', 'mcal_g1_1m', 'mcal_g1_1p', 'mcal_g1_2m', 'mcal_g1_2p', 'mcal_g2', 'mcal_g2_1m', 'mcal_g2_1p', 'mcal_g2_2m', 'mcal_g2_2p', 'mcal_mag_err_i', 'mcal_mag_err_i_1m', 'mcal_mag_err_i_1p', 'mcal_mag_err_i_2m', 'mcal_mag_err_i_2p', 'mcal_mag_err_r', 'mcal_mag_err_r_1m', 'mcal_mag_err_r_1p', 'mcal_mag_err_r_2m', 'mcal_mag_err_r_2p', 'mcal_mag_err_z', 'mcal_mag_err_z_1m', 'mcal_mag_err_z_1p', 'mcal_mag_err_z_2m', 'mcal_mag_err_z_2p', 'mcal_mag_i', 'mcal_mag_i_1m', 'mcal_mag_i_1p', 'mcal_mag_i_2m', 'mcal_mag_i_2p', 'mcal_mag_r', 'mcal_mag_r_1m', 'mcal_mag_r_1p', 'mcal_mag_r_2m', 'mcal_mag_r_2p', 'mcal_mag_z', 'mcal_mag_z_1m', 'mcal_mag_z_1p', 'mcal_mag_z_2m', 'mcal_mag_z_2p', 'mcal_psf_T_mean', 'mcal_psf_g1', 'mcal_psf_g2', 'mcal_s2n', 'mcal_s2n_1m', 'mcal_s2n_1p', 'mcal_s2n_2m', 'mcal_s2n_2p', 'objectId', 'ra', 'snr_i', 'snr_r', 'snr_z', 'tilename', 'region', 'mean_z', 'mean_z_1p', 'mean_z_1m', 'mean_z_2p', 'mean_z_2m'] 
  
 f = h5.File('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/shear_catalog_desy1.h5', 'w')
 g = f.create_group('metacal')

@@ -11,3 +11,35 @@ This project will hopefully help with the development of TXPipe and other DESC i
 * DES public data: https://des.ncsa.illinois.edu/home
 * HSC public data: https://hsc.mtk.nao.ac.jp/ssp/data-release/
 * KiDS public data: http://kids.strw.leidenuniv.nl/availability.php
+
+## Usage
+
+The scripts here will likely be using TXPipe, so it is likely that you will need to set the path before running 
+
+`export PYTHONPATH=$PYTHONPATH:/path of your TXPipe installation/`
+
+Otherwise running a TXPipe pipeline is the same as the TXPipe example. For convenience we copy the TXPipe example in this repo for people to check. That is, on nersc, run
+
+`shifter --image docker:joezuntz/txpipe bash` 
+
+`cd [path to your txpipe-reanalysis repo]`
+
+`mkdir -p data/example/inputs`
+
+`cd data/example/inputs`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/shear_catalog.hdf5`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/photometry_catalog.hdf5`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/sample_cosmodc2_w10year_errors.dat`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/cosmoDC2_trees_i25.3.npy`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/exposures.hdf5`
+
+`curl -O https://portal.nersc.gov/project/lsst/WeakLensing/star_catalog.hdf5`
+
+`cd ../../..`
+
+`ceci examples/laptop.yml`

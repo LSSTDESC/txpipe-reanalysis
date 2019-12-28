@@ -24,6 +24,8 @@ meanz_2p = desy1_bpz_2p[1].data['mean_z']
 desy1_bpz_2m = fits.open('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/mcal-y1a1-combined-griz-blind-v3-matched_BPZ_2m.fits')
 meanz_2m = desy1_bpz_2m[1].data['mean_z']
 
+print(len(meanz), len(meanz_1p), len(meanz_1m), len(meanz_2p), len(meanz_2m))
+
 #Sorting by coadd_id
 index_sort = np.argsort(d['coadd_objects_id'])
 d = d[index_sort]

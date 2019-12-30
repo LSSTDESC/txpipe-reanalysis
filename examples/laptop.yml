@@ -8,8 +8,8 @@ stages:
     - name: TXTwoPoint
     - name: TXDiagnosticPlots
     - name: TXGammaTFieldCenters
-    - name: TXGammaTBrightStars
-    - name: TXGammaTDimStars
+      #    - name: TXGammaTBrightStars
+      #- name: TXGammaTDimStars
     - name: TXRoweStatistics
 
 # Where to put outputs

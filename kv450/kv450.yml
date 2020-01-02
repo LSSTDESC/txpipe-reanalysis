@@ -1,9 +1,13 @@
 # This larger run has nearly 79M galaxies in
-launcher: cori-mini
+#launcher: cori-mini
+launcher: local
 
 # These site options tell the launcher to use shifter
-site:
-    shifter: joezuntz/txpipe-dev
+#site:
+#    shifter: joezuntz/txpipe-dev
+site: 
+     max_threads: 128
+
 
 modules: txpipe
 
@@ -17,25 +21,18 @@ stages:
       nprocess: 16
     - name: TXPhotozPlots
     - name: TXDiagnosticMaps
-      nprocess: 8
     - name: TXRandomCat
-      nodes: 1
     - name: TXTwoPoint
-      nprocess: 2
-      nodes: 2
       threads_per_process: 64
     - name: TXTwoPointPlots
     - name: TXMapPlots
     - name: TXDiagnosticPlots
-      nprocess: 8
     - name: TXGammaTBrightStars
       threads_per_process: 64
     - name: TXGammaTDimStars
       threads_per_process: 64
     - name: TXBrighterFatterPlot
     - name: TXRoweStatistics
-      nprocess: 2
-      nodes: 2
       threads_per_process: 64
     - name: TXPSFDiagnostics
 
@@ -62,7 +59,7 @@ inputs:
 
 # if supported by the launcher, restart the pipeline where it left off
 # if interrupted
-resume: True
+resume: False
 # where to put output logs for individual stages
 log_dir: data/kv450/logs
 # where to put an overall parsl pipeline log

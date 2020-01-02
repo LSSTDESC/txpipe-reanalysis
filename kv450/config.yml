@@ -9,8 +9,8 @@ TXPhotozStack:
 
 TXSelector:
     bands: riz #used for selection
-    T_cut: 0.1
-    s2n_cut: 0.0
+    T_cut: 0.5
+    s2n_cut: 20.0
     max_rows: 1000
     delta_gamma: 0.02
     zbin_edges: [0.2, 0.43, 0.63, 0.9, 1.3]

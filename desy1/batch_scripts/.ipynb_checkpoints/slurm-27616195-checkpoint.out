@@ -1,0 +1,6 @@
+shifter_realpath: failed to lstat /var/udiMount/global/cscratch1/sd/elp25/txpipe-reanalysis/desy1/batch_scripts/cosmosis
+FAILED to find real path for volume "from": /global/cscratch1/sd/elp25/txpipe-reanalysis/desy1/batch_scripts/cosmosis
+FAILED to setup user-requested mounts.
+FAILED to setup image.
+/var/spool/slurmd/job27616195/slurm_script: line 15: setup-firecrown: No such file or directory
+srun: fatal: Can not execute firecrown

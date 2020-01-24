@@ -47,6 +47,12 @@ def shear_catalog_formatter(data_hsc, output_path, delta_gamma=0.02):
     Ixx = data_hsc['ishape_hsm_psfmoments_11']
     Iyy = data_hsc['ishape_hsm_psfmoments_22']
     Ixy = data_hsc['ishape_hsm_psfmoments_12']
+    _data['mean_z'] = data_hsc['photoz_mean']
+    _data['mean_z_1p'] = _data['mean_z']
+    _data['mean_z_1m'] = _data['mean_z']
+    _data['mean_z_2p'] = _data['mean_z']
+    _data['mean_z_2m'] = _data['mean_z']
+
     for band in ['g','r','i','z','y']:
         _data[f'mcal_mag_{band}'] = data_hsc[f'{band}cmodel_mag']
         _data[f'mcal_mag_err_{band}'] = data_hsc[f'{band}cmodel_mag_err']

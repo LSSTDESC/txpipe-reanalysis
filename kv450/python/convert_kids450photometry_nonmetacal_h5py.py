@@ -20,16 +20,20 @@ kidsfiles = ['KiDS_DR3.1_G9_ugri_shear.fits', 'KiDS_DR3.1_G12_ugri_shear.fits',
              'KiDS_DR3.1_G15_ugri_shear.fits', 'KiDS_DR3.1_G23_ugri_shear.fits',
              'KiDS_DR3.1_GS_ugri_shear.fits']
 tables = []
+print('loading data')
 for i in range(len(kidsfiles)):
     d = getdata(kidsfiles[i])
     tables.append(d)
-
+print('loaded data')
 #Joining the tables
 kids_shearall = vstack(tables)
 
 #Sorting by ID
+print('sorting data')
 kids_shearall.sort('ID')
+print('sorted data')
 
+print('getting columns')
 #Getting the photometry columns
 tilename  = kids_shearall['KIDS_TILE']
 dec       = kids_shearall['DECJ2000']
@@ -54,16 +58,19 @@ z_mag     = kids_shearall['MAG_i']    #Placeholder
 z_mag_err = kids_shearall['MAGERR_i'] #Placeholder
 snr_z     = 1.086/z_mag_err           #Placeholder
 
+print('loaded columns')
 #Dealing with unicode, string needs to be S12
 tilename = np.array([a.encode('utf8') for a in tilename])
 objectId = np.array([a.encode('utf8') for a in objectId])
 
 data   = [tilename, dec, g_mag, g_mag_err, i_mag, i_mag_err, objectId, r_mag, r_mag_err, ra, snr_g, snr_i, snr_r, u_mag, u_mag_err, snr_u, y_mag, y_mag_err, snr_y, z_mag, z_mag_err, snr_z]
+
 dnames = ['tilename', 'dec', 'g_mag', 'g_mag_err', 'i_mag', 'i_mag_err', 'objectId', 'r_mag', 'r_mag_err', 'ra', 'snr_g', 'snr_i', 'snr_r', 'u_mag', 'u_mag_err', 'snr_u', 'y_mag', 'y_mag_err', 'snr_y', 'z_mag', 'z_mag_err', 'snr_z']
 
-outputdir = '/global/cscratch1/sd/elp25/txpipe-reanalysis/data/kids/'
+print('saving file')
 #Saving the h5 file...
-f = h5.File(outputdir + 'photometry_catalog_kids450.h5', 'w')
+outputdir = '/global/cscratch1/sd/elp25/txpipe-reanalysis/data/kids/'
+f = h5.File(outputdir + 'photometry_catalog_kids450_nonmetacal.h5', 'w')
 g = f.create_group('photometry')
 for i in range(len(data)):
     g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)

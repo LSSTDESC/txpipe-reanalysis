@@ -9,7 +9,7 @@ import numpy as np
 from astropy.table import Table, vstack
 import h5py as h5
 
-kidsdir = '/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/KIDS/'
+kidsdir = '/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/KIDS/KiDS450_DR3/'
 
 def getdata(filename):
     kids_shear = Table.read(kidsdir + filename, memmap=True)
@@ -88,6 +88,10 @@ mcal_s2n_1p     = mcal_s2n             #Placeholder
 mcal_s2n_2m     = mcal_s2n             #Placeholder 
 mcal_s2n_2p     = mcal_s2n             #Placeholder 
 mean_z          = kids_shearall['Z_B'] #BPZ best redshift estimate
+mean_z_1m = mean_z #Placeholder  
+mean_z_1p = mean_z #Placeholder  
+mean_z_2m = mean_z #Placeholder  
+mean_z_2p = mean_z #Placeholder 
 objectId        = kids_shearall['ID']    
 ra              = kids_shearall['RAJ2000'] 
 region          = kids_shearall['Patch'] 
@@ -103,12 +107,15 @@ objectId = np.array([a.encode('utf8') for a in objectId])
 region   = np.array([a.encode('utf8') for a in region])
 
 #Saving the data as h5file
-data = [dec, mcal_T, mcal_T_1m, mcal_T_1p, mcal_T_2m, mcal_T_2p, mcal_flags, mcal_g1, mcal_g1_1m, mcal_g1_1p, mcal_g1_2m, mcal_g1_2p, mcal_g2, mcal_g2_1m, mcal_g2_1p, mcal_g2_2m, mcal_g2_2p, mcal_mag_err_i, mcal_mag_err_i_1m, mcal_mag_err_i_1p, mcal_mag_err_i_2m, mcal_mag_err_i_2p, mcal_mag_err_r, mcal_mag_err_r_1m, mcal_mag_err_r_1p, mcal_mag_err_r_2m, mcal_mag_err_r_2p, mcal_mag_err_z, mcal_mag_err_z_1m, mcal_mag_err_z_1p, mcal_mag_err_z_2m, mcal_mag_err_z_2p, mcal_mag_i, mcal_mag_i_1m, mcal_mag_i_1p, mcal_mag_i_2m, mcal_mag_i_2p, mcal_mag_r, mcal_mag_r_1m, mcal_mag_r_1p, mcal_mag_r_2m, mcal_mag_r_2p, mcal_mag_z, mcal_mag_z_1m, mcal_mag_z_1p, mcal_mag_z_2m, mcal_mag_z_2p, mcal_psf_T_mean, mcal_psf_g1, mcal_psf_g2, mcal_s2n, mcal_s2n_1m, mcal_s2n_1p, mcal_s2n_2m, mcal_s2n_2p, objectId, ra, snr_i, snr_r, snr_z, tilename, region, mean_z]
+data = [dec, mcal_T, mcal_T_1m, mcal_T_1p, mcal_T_2m, mcal_T_2p, mcal_flags, mcal_g1, mcal_g1_1m, mcal_g1_1p, mcal_g1_2m, mcal_g1_2p, mcal_g2, mcal_g2_1m, mcal_g2_1p, mcal_g2_2m, mcal_g2_2p, mcal_mag_err_i, mcal_mag_err_i_1m, mcal_mag_err_i_1p, mcal_mag_err_i_2m, mcal_mag_err_i_2p, mcal_mag_err_r, mcal_mag_err_r_1m, mcal_mag_err_r_1p, mcal_mag_err_r_2m, mcal_mag_err_r_2p, mcal_mag_err_z, mcal_mag_err_z_1m, mcal_mag_err_z_1p, mcal_mag_err_z_2m, mcal_mag_err_z_2p, mcal_mag_i, mcal_mag_i_1m, mcal_mag_i_1p, mcal_mag_i_2m, mcal_mag_i_2p, mcal_mag_r, mcal_mag_r_1m, mcal_mag_r_1p, mcal_mag_r_2m, mcal_mag_r_2p, mcal_mag_z, mcal_mag_z_1m, mcal_mag_z_1p, mcal_mag_z_2m, mcal_mag_z_2p, mcal_psf_T_mean, mcal_psf_g1, mcal_psf_g2, mcal_s2n, mcal_s2n_1m, mcal_s2n_1p, mcal_s2n_2m, mcal_s2n_2p, objectId, ra, snr_i, snr_r, snr_z, tilename, region, mean_z, mean_z_1m, mean_z_1p, mean_z_2m, mean_z_2p]
 
-dnames = ['dec', 'mcal_T', 'mcal_T_1m', 'mcal_T_1p', 'mcal_T_2m', 'mcal_T_2p', 'mcal_flags', 'mcal_g1', 'mcal_g1_1m', 'mcal_g1_1p', 'mcal_g1_2m', 'mcal_g1_2p', 'mcal_g2', 'mcal_g2_1m', 'mcal_g2_1p', 'mcal_g2_2m', 'mcal_g2_2p', 'mcal_mag_err_i', 'mcal_mag_err_i_1m', 'mcal_mag_err_i_1p', 'mcal_mag_err_i_2m', 'mcal_mag_err_i_2p', 'mcal_mag_err_r', 'mcal_mag_err_r_1m', 'mcal_mag_err_r_1p', 'mcal_mag_err_r_2m', 'mcal_mag_err_r_2p', 'mcal_mag_err_z', 'mcal_mag_err_z_1m', 'mcal_mag_err_z_1p', 'mcal_mag_err_z_2m', 'mcal_mag_err_z_2p', 'mcal_mag_i', 'mcal_mag_i_1m', 'mcal_mag_i_1p', 'mcal_mag_i_2m', 'mcal_mag_i_2p', 'mcal_mag_r', 'mcal_mag_r_1m', 'mcal_mag_r_1p', 'mcal_mag_r_2m', 'mcal_mag_r_2p', 'mcal_mag_z', 'mcal_mag_z_1m', 'mcal_mag_z_1p', 'mcal_mag_z_2m', 'mcal_mag_z_2p', 'mcal_psf_T_mean', 'mcal_psf_g1', 'mcal_psf_g2', 'mcal_s2n', 'mcal_s2n_1m', 'mcal_s2n_1p', 'mcal_s2n_2m', 'mcal_s2n_2p', 'objectId', 'ra', 'snr_i', 'snr_r', 'snr_z', 'tilename', 'region', 'mean_z']
+dnames = ['dec', 'mcal_T', 'mcal_T_1m', 'mcal_T_1p', 'mcal_T_2m', 'mcal_T_2p', 'mcal_flags', 'mcal_g1', 'mcal_g1_1m', 'mcal_g1_1p', 'mcal_g1_2m', 'mcal_g1_2p', 'mcal_g2', 'mcal_g2_1m', 'mcal_g2_1p', 'mcal_g2_2m', 'mcal_g2_2p', 'mcal_mag_err_i', 'mcal_mag_err_i_1m', 'mcal_mag_err_i_1p', 'mcal_mag_err_i_2m', 'mcal_mag_err_i_2p', 'mcal_mag_err_r', 'mcal_mag_err_r_1m', 'mcal_mag_err_r_1p', 'mcal_mag_err_r_2m', 'mcal_mag_err_r_2p', 'mcal_mag_err_z', 'mcal_mag_err_z_1m', 'mcal_mag_err_z_1p', 'mcal_mag_err_z_2m', 'mcal_mag_err_z_2p', 'mcal_mag_i', 'mcal_mag_i_1m', 'mcal_mag_i_1p', 'mcal_mag_i_2m', 'mcal_mag_i_2p', 'mcal_mag_r', 'mcal_mag_r_1m', 'mcal_mag_r_1p', 'mcal_mag_r_2m', 'mcal_mag_r_2p', 'mcal_mag_z', 'mcal_mag_z_1m', 'mcal_mag_z_1p', 'mcal_mag_z_2m', 'mcal_mag_z_2p', 'mcal_psf_T_mean', 'mcal_psf_g1', 'mcal_psf_g2', 'mcal_s2n', 'mcal_s2n_1m', 'mcal_s2n_1p', 'mcal_s2n_2m', 'mcal_s2n_2p', 'objectId', 'ra', 'snr_i', 'snr_r', 'snr_z', 'tilename', 'region', 'mean_z', 'mean_z_1m', 'mean_z_1p', 'mean_z_2m', 'mean_z_2p']
 
-f = h5.File(kidsdir + 'shear_catalog_kids450.h5', 'w')
-g = f.create_group('metacal')
+outputdir = '/global/cscratch1/sd/elp25/txpipe-reanalysis/data/kids/'
+f = h5.File(outputdir + 'shear_catalog_kids450.h5', 'w')
+g = f.create_group('shear')
+metadata = {'catalog_type':'metacal'}
+g.attrs.update(metadata)
 for i in range(len(data)):
     g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)
 f.close()

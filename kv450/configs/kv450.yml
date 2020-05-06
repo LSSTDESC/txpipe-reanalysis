@@ -21,39 +21,30 @@ stages:
       nprocess: 16
     - name: TXPhotozPlots
     - name: TXDiagnosticMaps
-    - name: TXRandomCat
     - name: TXTwoPoint
       threads_per_process: 64
+    - name: TXBlinding
     - name: TXTwoPointPlots
     - name: TXMapPlots
     - name: TXDiagnosticPlots
-    - name: TXGammaTBrightStars
-      threads_per_process: 64
-    - name: TXGammaTDimStars
-      threads_per_process: 64
-    - name: TXBrighterFatterPlot
-    - name: TXRoweStatistics
-      threads_per_process: 64
-    - name: TXPSFDiagnostics
 
 # Where to put outputs
 output_dir: data/kv450/outputs
 
 
 # configuration settings
-config: kv450/config.yml
+config: /global/cscratch1/sd/elp25/txpipe-reanalysis/kv450/configs/kv450config.yml
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
 
 inputs:
     # See README for paths to download these files
-    shear_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/KIDS/shear_catalog_kids450.h5
-    photometry_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/KIDS/photometry_catalog_kids450.h5
+    shear_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/kv450/data/shear_catalog_kids450_nonmetacal.h5
+    photometry_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/kv450/data/photometry_catalog_kids450_nonmetacal.h5
     photoz_trained_model: data/kv450/inputs/cosmoDC2_trees_i25.3.npy
     calibration_table: data/kv450/inputs/sample_cosmodc2_w10year_errors.dat
     exposures: data/kv450/inputs/exposures.hdf5
-    star_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/DES_psf_catalog.hdf5
     # This file comes with the code
     fiducial_cosmology: data/fiducial_cosmology.yml
 

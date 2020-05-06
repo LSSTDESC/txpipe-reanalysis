@@ -1,41 +1,29 @@
-
-PZPDFMLZ:
-    nz: 301
-    zmax: 3.0
-    chunk_rows: 100000
-
-TXPhotozStack:
-    chunk_rows: 100000
-
 TXSelector:
-    bands: riz #used for selection
-    T_cut: 0.1
+    bands: riz
+    # only using the recommended metacal flag cut 
+    T_cut: 0.0
     s2n_cut: 0.0
     max_rows: 1000
     delta_gamma: 0.02
     zbin_edges: [0.2, 0.43, 0.63, 0.9, 1.3]
+    nsrc: 4
+    nlens: 0
     chunk_rows: 100000
-    # Mag cuts
-    cperp_cut: 0.2
-    r_cpar_cut: 13.5
-    r_lo_cut: 16.0
-    r_hi_cut: 19.6
-    i_lo_cut: 17.5
-    i_hi_cut: 19.9
-    r_i_cut: 2.0
-    # may also need one for r_cpar_cut
-
-TXRandomCat:
-    chunk_rows: 100000
-    density: 10 # gals per sq arcmin
+    input_pz: True
+    apply_flag_cut: True
+   # lens selection
+    select_lens: False
+    shear_catalog_type: 'metacal'
+    apply_mask: True
 
 TXTwoPoint:
-    binslop: 0.1
+    binslop: 0.0
     delta_gamma: 0.02
-    do_pos_pos: True
+    do_pos_pos: False
     do_shear_shear: True
-    do_shear_pos: True
-    flip_g2: True
+    do_shear_pos: False
+    flip_g2: False
+    shear_catalog_type: 'metacal'
     # use true when using metacal shears
     verbose: 0
 

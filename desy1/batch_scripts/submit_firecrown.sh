@@ -1,18 +1,22 @@
-#!/bin/bash   
-#SBATCH -N 2
-#SBATCH --qos=regular
-#SBATCH --time=15:00:00
-#SBATCH --job-name=FireCrown_Test
-#SBATCH --image=docker:joezuntz/txpipe_cosmosis_firecrown:latest
-#SBATCH --license=SCRATCH
-#SBATCH --constraint=knl
+#!/bin/bash -l
+
+#SBATCH -C haswell
+#SBATCH -q regular
+#SBATCH -N 4
+#SBATCH -t 20:00:00
+#SBATCH -A m1727
+#SBATCH -J firecrown_cosmicshear_desy1
 #SBATCH --mail-user=elp25@duke.edu
+#SBATCH --mail-type=ALL
+#SBATCH --output=cosmic_shear_desy1.out
+#SBATCH --error=cosmic_shear_desy1.err
 
 export OMP_NUM_THREADS=1
 
-source setup-firecrown
+source activate firecrown 
+
+cd /global/cscratch1/sd/elp25/txpipe-cosmodc2/firecrown_config
+mpirun -n 32 firecrown run-cosmosis cosmodc2_firecrown_real_fisher.yaml
 
 
-srun -n  64 shifter --volume=/global/cscratch1/sd/elp25/cosmosis:/opt/cosmosis --volume /global/cscratch1/sd/elp25/FireCrown/:/opt/firecrown --volume /global/cscratch1/sd/elp25/TXPipe:/opt/txpipe firecrown compute /global/cscratch1/sd/elp25/FireCrown/examples/des_y1_3x2pt/des_y1_3x2pt.yaml 
 
-srun -n  64 shifter --volume=/global/cscratch1/sd/elp25/cosmosis:/opt/cosmosis --volume /global/cscratch1/sd/elp25/FireCrown/:/opt/firecrown --volume /global/cscratch1/sd/elp25/TXPipe:/opt/txpipe firecrown run-emcee /global/cscratch1/sd/elp25/FireCrown/examples/des_y1_3x2pt/des_y1_3x2pt.yaml

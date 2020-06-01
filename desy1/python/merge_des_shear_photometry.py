@@ -15,7 +15,7 @@ def intersecting_indices(x, y):
 dirname = '/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/'
 #Load the files
 print('loading files')
-s = h.File('/global/cscratch1/sd/elp25/DES-Y1-Explore/data/shear_catalog_desy1.h5', 'r')
+s = h.File('/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/shear_catalog_desy1.h5', 'r')
 p = h.File(dirname+'photometry_catalog.hdf5', 'r')
 idxs, idxp = intersecting_indices(s['/metacal/objectId'].value, p['/photometry/objectId'].value)
 print('masking')
@@ -27,9 +27,11 @@ dnames = ['dec', 'mcal_T', 'mcal_T_1m', 'mcal_T_1p', 'mcal_T_2m', 'mcal_T_2p', '
 
 print('saving files')
 f = h.File('/global/cscratch1/sd/elp25/TXPipe/data/desy1/inputs/shear_catalog_desy1_merged.h5', 'w')
-g = f.create_group('metacal')
+g = f.create_group('shear')
 for i in range(len(dnames)):
     g.create_dataset(dnames[i], data=s['/metacal/'+dnames[i]].value[idxs][mcal_mask], dtype=s['/metacal/'+dnames[i]].dtype)
+metadata = {'catalog_type':'metacal'}
+g.attrs.update(metadata)
 f.close()
 
 s.close()

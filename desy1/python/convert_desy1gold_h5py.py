@@ -12,7 +12,7 @@ def add_col(name):
 
 
 # List all files for gold catalog (public realease des y1), one file per tile
-path = '/global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/gold/'
+path = '/global/cscratch1/sd/elp25/DES-Y1-Explore/data/'
 files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f)) and 'DES' in f]
 print files
 print len(files)

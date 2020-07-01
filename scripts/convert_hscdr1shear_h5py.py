@@ -15,12 +15,14 @@ def write_output(output_file, group_name, cols, start, end, data):
     for name in cols:
         g[name][start:end] = data[name]
 
-def shear_catalog_formatter(data_hsc, output_path, delta_gamma=0.02):
+def shear_catalog_formatter(data_hsc, output_path, photo_z, delta_gamma=0.02):
     _data = dict()
     data_hsc = data_hsc[data_hsc['iclassification_extendedness']==1] # Selecting galaxies
     _data['id'] = data_hsc['object_id']
-    _data['ra'] = data_hsc['ira']
-    _data['dec'] = data_hsc['idec']
+    #_data['ra'] = data_hsc['ira']
+    #_data['dec'] = data_hsc['idec']
+    _data['ra'] = data_hsc['ra']
+    _data['dec'] = data_hsc['dec']
     _data['mcal_T'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
     _data['mcal_T_1p'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
     _data['mcal_T_1m'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
@@ -59,12 +61,12 @@ def shear_catalog_formatter(data_hsc, output_path, delta_gamma=0.02):
     Ixx = data_hsc['ishape_hsm_psfmoments_11']
     Iyy = data_hsc['ishape_hsm_psfmoments_22']
     Ixy = data_hsc['ishape_hsm_psfmoments_12']
-    _data['mean_z'] = data_hsc['photoz_mean']
+    _data['mean_z'] = data_hsc[photo_z]
     _data['mean_z_1p'] = _data['mean_z']
     _data['mean_z_1m'] = _data['mean_z']
     _data['mean_z_2p'] = _data['mean_z']
     _data['mean_z_2m'] = _data['mean_z']
-
+    _data['redshift_true'] = _data['mean_z']  # To make photo-z binning
     for band in ['g','r','i','z','y']:
         _data[f'mcal_mag_{band}'] = data_hsc[f'{band}cmodel_mag']
         _data[f'mcal_mag_err_{band}'] = data_hsc[f'{band}cmodel_mag_err']
@@ -97,8 +99,10 @@ parser.add_argument('--input-path', '-i', type=str, default=None, dest='input_pa
         help='Input path to convert')
 parser.add_argument('--output-path', '-o', type=str, default=None, dest='output_path',
         help='Output path of converted shear catalog')
+parser.add_argument('--pz-col', type=str, default='pz_mean_eab', dest='photo_z',
+        help='Photo-z column to use')
 args = parser.parse_args()
 data = fitsio.read(args.input_path)
-shear_catalog_formatter(data, args.output_path)
+shear_catalog_formatter(data, args.output_path, args.photo_z)
 
 

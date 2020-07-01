@@ -1,0 +1,97 @@
+ 
+\documentclass[a4paper,fleqn,usenatbib]{mnras}
+\bibliographystyle{mnras}
+
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{graphicx,amsmath,bm,natbib,color, multirow}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{appendix}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{mathptmx}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{footnote}
+\usepackage{hyperref}  
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{epstopdf}
+\usepackage{acronym}
+\usepackage{tablefootnote}
+\usepackage{lineno}
+\usepackage{eso-pic}% http://ctan.org/pkg/eso-pic
+\usepackage{threeparttable}
+
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+
+
+\newcommand{\cc}[1]{\textcolor{magenta}{#1}}
+
+% Journals:
+\def\reff@jnl#1{{\rm#1\/}}
+\def\aj{\reff@jnl{AJ}}         % Astronomical Journal
+\def\araa{\reff@jnl{ARA\&A}}      % Annual Review of Astron and Astrophys
+\def\apj{\reff@jnl{ApJ}}        % Astrophysical Journal
+\def\apjl{\reff@jnl{ApJ}}        % Astrophysical Journal, Letters
+\def\apjs{\reff@jnl{ApJS}}       % Astrophysical Journal, Supplement
+\def\aap{\reff@jnl{A\&A}}        % Astronomy and Astrophysics
+\def\aapr{\reff@jnl{A\&A~Rev.}}     % Astronomy and Astrophysics Reviews
+\def\aaps{\reff@jnl{A\&AS}}       % Astronomy and Astrophysics, Supplement
+\def\mnras{\reff@jnl{MNRAS}}      % Monthly Notices of the RAS
+\def\physrep{\reff@jnl{Physics Reports}}% Physics Reports
+\def\prd{\reff@jnl{Phys.Rev.D}}     % Physical Review D
+\def\prl{\reff@jnl{Phys.Rev.Lett}}   % Physical Review Letters
+\def\pasp{\reff@jnl{PASP}}       % Publications of the ASP
+\def\pasj{\reff@jnl{PASJ}}       % Publications of the ASJ
+\def\nat{\reff@jnl{Nature}}       % Nature
+\def\jcap{\reff@jnl{JCAP}}   %Journal of Cosmology and Astroparticle Physics
+\def\memsai{\reff@jnl{MemSAI}} %Memorie della Societa Astronomica Italiana Supplement 
+\def\na{\reff@jnl{New Astronomy}}       % New Astronomy
+\def\procspie{\reff@jnl{SPIE}}       %SPIE 
+\def\pasa{\reff@jnl{PASA}}       % Publication of the Astronomical Society of Austrailia
+
+% Referencing:
+\def\Sref#1{Sec.~\ref{#1}\xspace}
+\def\srefa#1{$\S$\ref{#1}\xspace}
+\def\srefb#1{\ref{#1}\xspace}
+\def\Fref#1{Fig.~\ref{#1}\xspace}
+\def\frefa#1{Figures~\ref{#1}\xspace}
+\def\frefb#1{\ref{#1}\xspace}
+\def\Tref#1{Table~\ref{#1}\xspace}
+\def\trefa#1{Tables~\ref{#1}\xspace}
+\def\trefb#1{\ref{#1}\xspace}
+\def\Eref#1{Eq.~(\ref{#1})\xspace}
+\def\erefa#1{Equations~\ref{#1}\xspace}
+\def\erefb#1{\ref{#1}\xspace}
+\def\Aref#1{Appendix~\ref{#1}\xspace}
+\def\Cref#1{Chapter~\ref{#1}\xspace}
+\def\crefa#1{Chapters~\ref{#1}\xspace}
+\def\crefb#1{\ref{#1}\xspace}
+\def\eg{{e.g.}}
+\def\ie{{i.e.}}
+\def\etc{{etc.}}
+\def\imshape{\textsc{Im3shape}\xspace}
+\def\metacal{\textsc{MetaCalibration}\xspace}
+\def\healpix{\textsc{Healpix}\xspace}
+\def\redmapper{\textsc{redMapper}\xspace}
+\def\redmagic{\textsc{redMagic}\xspace}
+
+\begin{document}
+
+\title[txpipe-reanalysis]{txpipe-reanalysis: analysis choices}
+\author[XX et al.]{
+XX,$^{1,*}$ }
+\date{Accepted XXX. Received YYY; in original form ZZZ}
+\maketitle
+
+
+\section{Measurement analysis choices}
+angular binning, treecorr settings, covariance model, scale cuts, n(z) estimation, estimation of deltaz and m
+
+\section{Likelihood analysis choices}
+nuisance parameters, cosmology parameters, priors, inference software, sampling method, modeling (especially small scales)
+
+\end{document}

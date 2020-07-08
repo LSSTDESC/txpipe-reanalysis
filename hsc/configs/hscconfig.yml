@@ -14,10 +14,10 @@ TXPhotozPlots:
 TXSourceSelector:
     bands: ri #used for selection
     T_cut: 0.0
-    s2n_cut: 0.0
+    s2n_cut: 10.0
     max_rows: 1000
     delta_gamma: 0.02
-    source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
+    source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
     chunk_rows: 100000
     nsrc: 4
     nlens: 0
@@ -25,38 +25,54 @@ TXSourceSelector:
     select_lens: False
     apply_flag_cut: True
     shear_catalog_type: 'lensfit'
+    shear_prefix: ''
     input_pz: True
     # may also need one for r_cpar_cut
 
-TXLensSelector:
+TXTruthLensSelector:
     # Mag cuts
     chunk_rows: 100000
-    lens_zbin_edges: [0.0,0.2,0.4]
-    cperp_cut: 0.2
-    r_cpar_cut: 13.5
-    r_lo_cut: 16.0
-    r_hi_cut: 21.6
-    i_lo_cut: 17.5
-    i_hi_cut: 21.9
-    r_i_cut: 2.0
+    lens_zbin_edges: [0.15,0.5,0.75,1.0,1.5]
+    cperp_cut: 100
+    r_cpar_cut: 100
+    r_lo_cut: 0
+    r_hi_cut: 30
+    i_lo_cut: 0
+    i_hi_cut: 24.5
+    r_i_cut: 100
     # may also need one for r_cpar_cut
+
+TXSimpleMask:
+    depth_cut: 24.5
+
+TXMainMaps:
+    nside: 1024
 
 TXTwoPoint:
     binslop: 0.1
     delta_gamma: 0.02
-    do_pos_pos: False
+    do_pos_pos: True
     min_sep: 0.316
     max_sep: 316
     nbins: 31
     do_shear_shear: True
-    do_shear_pos: False
+    do_shear_pos: True
     flip_g2: False
     m_from_cat: True
     c_from_cat: True
     shear_catalog_type: 'lensfit'
     # use true when using metacal shears
     verbose: 0
+TXTrueNumberDensity:
+    zmax: 3
+    nz: 301
+    
+TXAuxiliaryMaps:
+    snr_threshold: 10
 
+TXDiagnosticPlots:
+    shear_prefix: ''
+    psf_prefix: 'psf_'    
 TXDiagnosticMaps:
     chunk_rows: 100000  # Number of rows to process at once
     sparse: True  # Generate sparse maps - faster if using small areas
@@ -74,6 +90,8 @@ TXDiagnosticMaps:
     npix_y: 60
     shear_type: 'lensfit'
 
+TXNoiseMaps:
+    shear_prefix: ''
 
 TXTwoPointFourier:
     chunk_rows: 100000

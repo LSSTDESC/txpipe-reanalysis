@@ -7,49 +7,70 @@ launcher:
 # These site options tell the launcher to use shifter
 #site:
 #    shifter: joezuntz/txpipe-dev
+#site:
+#  image: joezuntz/txpipe
+#  name: cori-interactive
+#  max_threads: 64
+  #mpi_command: mpirun -n
+#site:
+#    name: cori-interactive
+    # Number of jobs to run at once.  Default as shown.
+    #    max_threads: ${SLURM_JOB_NUM_NODES}
 site:
-  image: joezuntz/txpipe
-  name: cori-interactive
-  max_threads: 128
-
-
+    name: local
+    # Number of jobs to run at once.  Default as shown.
+    max_threads: 32
+    # These are available for every site.  The default is not to use them:
+    # docker/shifter image
+    #image: joezuntz/txpipe
+    #docker/shifter volume mounting
+    volume: ${PWD}:/opt/txpipe 
 modules: txpipe
 
 stages:
     - name: TXSourceSelector
       nprocess: 32
-    - name: TXLensSelector
+    - name: TXTruthLensSelector
       nprocess: 32  
-    - name: PZPDFMLZ
-      nprocess: 64
-      nodes: 2
-    - name: TXPhotozStack
-      nprocess: 16
+      #- name: PZPDFMLZ
+      #nprocess: 64
+      #nodes: 2
+      #- name: TXPhotozStack
+      #nprocess: 1
+    - name: TXTracerMetadata
+    - name: TXAuxiliaryMaps
+    - name: TXTrueNumberDensity
     - name: TXRandomCat
     - name: TXJackknifeCenters
     - name: TXPhotozPlots
-    - name: TXDiagnosticMaps
+    - name: TXMainMaps
+    - name: TXSimpleMask
+    - name: TXDensityMaps
+    - name: TXNoiseMaps
+      #- name: TXDiagnosticMaps
     - name: TXTwoPoint
+      threads_per_process: 64
+    - name: TXTwoPointFourier
       threads_per_process: 64
     - name: TXBlinding
     - name: TXTwoPointPlots
     - name: TXMapPlots
-    - name: TXDiagnosticPlots
+      #- name: TXDiagnosticPlots
 
 # Where to put outputs
-output_dir: data/hsc/outputs
+output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs
 
 
 # configuration settings
-config: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/configs/hscconfig.yml
+config: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig.yml
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
 
 inputs:
     # See README for paths to download these files
-    shear_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/shear_catalog_hsc_nonmetacal.h5
-    photometry_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_nonmetacal.h5
+    shear_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/shear_catalog_hsc_nonmetacal.h5
+    photometry_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_nonmetacal.h5
     photoz_trained_model: data/hsc/inputs/cosmoDC2_trees_i25.3.npy
     calibration_table: data/hsc/inputs/sample_cosmodc2_w10year_errors.dat
     exposures: data/hsc/inputs/exposures.hdf5
@@ -58,7 +79,7 @@ inputs:
 
 # if supported by the launcher, restart the pipeline where it left off
 # if interrupted
-resume: False
+resume: True
 # where to put output logs for individual stages
 log_dir: data/hsc/logs
 # where to put an overall parsl pipeline log

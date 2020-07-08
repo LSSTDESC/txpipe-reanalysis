@@ -29,7 +29,33 @@ print('loaded data')
 hsc_shearall = vstack(tables)
 
 
-hsc_shearall = hsc_shearall[hsc_shearall['iclassification_extendedness']==1] # Selecting galaxies
+regauss_flag = (hsc_shearall['ishape_hsm_regauss_flags']==False)
+regaus_sigma_nan = (hsc_shearall['ishape_hsm_regauss_sigma'] !=np.nan)
+extendedness = (hsc_shearall['iclassification_extendedness']!=0)
+flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=2)
+regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
+regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
+regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
+regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
+imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
+blendedness_abs_flux = (hsc_shearall['iblendedness_abs_flux']< 10**(-0.375))
+gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=2)
+rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=2)
+zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=2)
+yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=2)
+
+ishape_hsm_regauss_e1_isnull = hsc_shearall['ishape_hsm_regauss_e1_isnull'] == False
+ishape_hsm_regauss_e2_isnull = hsc_shearall['ishape_hsm_regauss_e2_isnull'] == False
+ishape_hsm_regauss_derived_shape_weight_isnull = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_m_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_c1_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False
+ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False
+
+all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut)
+null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
+
+hsc_shearall = hsc_shearall[all_cuts&null_cuts]
 
 #Sorting by ID
 print('sorting data')

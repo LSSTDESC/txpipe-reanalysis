@@ -84,9 +84,9 @@ print('loaded columns')
 #region   = np.array([a.encode('utf8') for a in region])
 
 #Saving the data as h5file
-data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e]
+data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z]
 
-dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e']
+dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true']
 
 outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
 print('saving file, ',outputdir + 'shear_catalog_hsc_nonmetacal.h5')

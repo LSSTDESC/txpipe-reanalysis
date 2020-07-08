@@ -10,7 +10,7 @@ def getdata(filename):
     hsc_photometry = Table.read(hscdir + filename, memmap=True) 
     return hsc_photometry 
 
-hscfiles = [ 'HSC_WIDE_GAMA09H.fits',
+hscfiles = [ 'HSC_WIDE_GAMA09H.fits', 
              'HSC_WIDE_GAMA15H.fits', 'HSC_WIDE_HECTOMAP.fits',
              'HSC_WIDE_VVDS_part1.fits','HSC_WIDE_VVDS_part2.fits',
              'HSC_WIDE_WIDE12H.fits','HSC_WIDE_XMM.fits']

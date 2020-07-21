@@ -1,0 +1,86 @@
+# This section defines fiducial values for all parameters.
+parameters:
+  Omega_k: 0.0
+  Omega_c: 0.27
+  Omega_b: 0.045
+  h: 0.67
+  n_s: 0.96
+  sigma8: 0.801
+  w0: -1.0
+  wa: 0.0
+
+  # lens bin zero
+  {% for i in range(5) %}
+  src{{ i }}_delta_z: 0.0
+  {% endfor %}
+
+cosmosis:
+  # the name of the sampler to use
+  sampler: maxlike
+  # the output chain file name
+  parameters:
+    Omega_c: [0.1, 0.2545,  0.6]
+    sigma8: [0.6,  0.801,  1.0]
+    src0_mult_bias: [-0.1, 0.0,  0.1]
+  # whether to output more debugging information on failure
+  # and regard python exceptions as errors (instead of just
+  # using -inf likelihoods)
+  debug: True
+  # suppress output information
+  quiet: False
+  # whether to use MPI - must run under mpirun to do this
+  mpi: False
+  # parameters for individual samplers.
+  # multinest - nested sampling
+  multinest:
+    # for info on these parameter see the multinest documentation.
+    max_iterations: 50000
+    live_points: 250
+    tolerance: 0.1
+    constant_efficiency: False
+    live_points: 500
+    efficiency: 0.3
+    resume: True
+  # for computing a grid of models - works for up to about three dimensions
+  # but quickly becomes untenable above that.
+  grid:
+    # the number of grid points in each dimension.  Total number of models
+    # is nsample_dimension ** ndim
+    nsample_dimension: 25
+
+two_point:
+  module: firecrown.ccl.two_point
+  sacc_data: KV450_cosmicshear_H20.fits
+  sources:
+    {% for i in range(5) %}
+    src{{ i }}:
+      kind: WLSource
+      sacc_tracer: trc{{ i }}
+      systematics:
+        - pz_delta_{{ i }}
+    {% endfor %}
+
+  systematics:
+    {% for i in range(5) %}
+    pz_delta_{{ i }}:
+      kind: PhotoZShiftBias
+      delta_z: src{{ i }}_delta_z
+    {% endfor %}
+
+  statistics:
+    {% for i in range(5) %}
+    {% for j in range(i, 5) %}
+    cl_src{{ i }}_src{{ j }}:
+      sources: ['src{{ i }}', 'src{{ j }}']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+    {% endfor %}
+    {% endfor %}
+
+  likelihood:
+    kind: ConstGaussianLogLike
+    data_vector:
+    {% for i in range(5) %}
+    {% for j in range(i, 5) %}
+      - cl_src{{ i }}_src{{ j }}
+    {% endfor %}
+    {% endfor %}

@@ -32,14 +32,9 @@ parameters:
   #z_piv_ia: 0.62
 
   # shear errors
-  {% for i in range(5) %}
-  src{{ i }}_mult_bias: 0.0
+  {% for loc in [-0.017,-0.008,-0.015,0.010,0.006] %}
+  src{{ loop.index0 }}_mult_bias: {{ loc }}
   {% endfor %}
-
-  # linear bias for lenses
-  #{% for val in [1.4, 1.6, 1.6, 1.9, 2.0] %}
-  #bias_lens{{ loop.index0 }}: {{ val }}
-  #{% endfor %}
 
   # photoz shifts for the lensing sources
   {% for loc in [-0.039, -0.023, -0.026, -0.012, -0.011] %}
@@ -124,7 +119,7 @@ priors:
   #  scale: 2.2  # 3.0 - 0.8
   #{% endfor %}
 
-  {% for loc, scale in [(-0.039, 0.078), (-0.023, 0.046), (-0.026, 0.052), (-0.012, 0.024),(-0.011, 0.022)] %}
+  {% for loc, scale in [(0.0, 0.117), (0.0, 0.069), (0.0, 0.078), (0.0, 0.036),(0.0, 0.033)] %} # should be 3 sigma 
   src{{ loop.index0 }}_delta_z:
     kind: norm
     loc: {{ loc }}

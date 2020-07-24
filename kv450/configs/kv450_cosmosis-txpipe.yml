@@ -1,0 +1,205 @@
+#kv450 config file
+# not implemented:
+# scale cuts
+# c-correction, this includes a delta_constant and A_c amplitude term
+# need to try multinest
+# just xip
+# m-corrections? 
+# run on A_s not sigma8
+# run for more than two parameters 
+
+
+
+parameters:
+  Omega_k: 0.0
+  Omega_b: 0.0485
+  Omega_c: 0.2545
+  w0: -1.0
+  wa: 0.0
+  h: 0.682
+  sigma8: 8
+  #A_s: 2.1e-9 #4.48e-10
+  #sigma8: 0.801
+  n_s: 0.971
+  transfer_function: eisenstein_hu
+
+  # IA model
+  A0: 0.5
+  eta_ia: 0.0 #fixed
+
+  # these parameters are fixed kv450 did one test with this but not in fiducial
+  #alphag_ia: -1
+  #z_piv_ia: 0.62
+
+  # shear errors
+  {% for i in range(5) %}
+  src{{ i }}_mult_bias: 0.0
+  {% endfor %}
+
+  # linear bias for lenses
+  #{% for val in [1.4, 1.6, 1.6, 1.9, 2.0] %}
+  #bias_lens{{ loop.index0 }}: {{ val }}
+  #{% endfor %}
+
+  # photoz shifts for the lensing sources
+  {% for loc in [-0.039, -0.023, -0.026, -0.012, -0.011] %}
+  src{{ loop.index0 }}_delta_z: {{ loc }}
+  {% endfor %}
+
+  # photoz shifts for the lenses
+  #{% for loc in [0.001, 0.002, 0.001, 0.003, 0.0] %}
+  #lens{{ loop.index0 }}_delta_z: {{ loc }}
+  #{% endfor %}
+
+cosmosis:
+  # the name of the sampler to use
+  sampler: emcee
+  # the output chain file name
+  parameters:
+    Omega_c: [0.1, 0.22, 0.9] #min value, starting point, and max value
+    sigma8: [0.6,  0.801,  1.0] #A_s: [2.1e-10,2.1e-9,2.1e-8] #[4.48e-10,7.624e-9,1.48e-8] 
+    #Omega_b: [0.01,0.03,0.1]
+    #n_s: [0.1,0.9,2.0]
+    #h: [0.3,0.7,.99]
+    #A0: [-6.0, 0, 6.0]
+    
+    #src0_mult_bias: [-0.1, 0.0,  0.1]
+  # whether to output more debugging information on failure
+  # and regard python exceptions as errors (instead of just
+  # using -inf likelihoods)
+  debug: True
+  # suppress output information
+  quiet: False
+  # whether to use MPI - must run under mpirun to do this
+  mpi: True
+  emcee:
+    walkers: 10
+    nsample: 20
+  # parameters for individual samplers.
+  # multinest - nested sampling
+  #multinest:
+    # for info on these parameter see the multinest documentation.
+  #  max_iterations: 50000
+  #  live_points: 250
+  #  tolerance: 0.1
+  #  constant_efficiency: False
+  #  live_points: 500
+  #  efficiency: 0.3
+  #  resume: True
+  # for computing a grid of models - works for up to about three dimensions
+  # but quickly becomes untenable above that.
+  #grid:
+    # the number of grid points in each dimension.  Total number of models
+    # is nsample_dimension ** ndim
+   # nsample_dimension: 25
+
+priors:
+  module: firecrown.priors
+
+  Omega_b:
+    kind: uniform
+    loc: 0.046
+    scale: 0.01  # 0.07 - 0.03
+  Omega_c:
+    kind: uniform
+    loc: 0.024
+    scale: 0.99  # 0.87 - 0.03
+  h:
+    kind: uniform
+    loc: 0.73
+    scale: 0.09  # 0.91 - 0.55
+  A_s:
+    kind: uniform
+    loc: 3.25e-10
+    scale: 1.438e-8  # 1.07 - 0.87
+  n_s:
+    kind: uniform
+    loc: 0.7
+    scale: 0.6
+
+  #{% for i in range(5) %}
+  #bias_lens{{ i }}:
+  #  kind: uniform
+  #  loc: 0.8
+  #  scale: 2.2  # 3.0 - 0.8
+  #{% endfor %}
+
+  {% for loc, scale in [(-0.039, 0.078), (-0.023, 0.046), (-0.026, 0.052), (-0.012, 0.024),(-0.011, 0.022)] %}
+  src{{ loop.index0 }}_delta_z:
+    kind: norm
+    loc: {{ loc }}
+    scale: {{ scale }}
+  {% endfor %}
+
+  #{% for i in range(4) %}
+  #src{{ i }}_mult_bias:
+  #  kind: norm
+  #  loc: 0.012
+  #  scale: 0.023
+  #{% endfor %}
+
+two_point:
+  module: firecrown.ccl.two_point
+  sacc_data: ../data/summary_statistics_real.sacc
+  sources:
+    {% for i in range(5) %}
+    src{{ i }}:
+      kind: WLSource
+      sacc_tracer: source_{{ i }}
+    {% endfor %}
+
+    #{% for i in range(5) %}
+    #lens{{ i }}:
+    #  kind: NumberCountsSource
+    #  sacc_tracer: lens{{ i }}
+    #  bias: bias_lens{{ i }}
+    #  systematics:
+    #    - delta_z_lens{{ i }}
+    #{% endfor %}
+
+  systematics:
+    #{% for i in range(5) %}
+    #delta_z_lens{{ i }}:
+    #  kind: PhotoZShiftBias
+    #  delta_z: lens{{ i }}_delta_z
+    #{% endfor %}
+
+    {% for i in range(5) %}
+    delta_z_src{{ i }}:
+      kind: PhotoZShiftBias
+      delta_z: src{{ i }}_delta_z
+    {% endfor %}
+
+    ia:
+      kind: LinearAlignmentSystematic
+      alphaz: eta_ia
+      alphag: alphag_ia
+      z_piv: z_piv_ia
+
+    #{% for i in range(4) %}
+    #shear_bias_src{{ i }}:
+    #  kind: MultiplicativeShearBias
+    #  m: src{{ i }}_mult_bias
+    #{% endfor %}
+
+  statistics: #, ('xim', 'galaxy_shear_xi_minus')
+    {% for stat, sacc_stat in [('xip', 'galaxy_shear_xi_plus')] %}
+    {% for i in range(5) %}
+    {% for j in range(i, 5) %}
+    {{ stat }}_src{{ i }}_src{{ j }}:
+      sources: ['src{{ i }}', 'src{{ j }}']
+      sacc_data_type: '{{ sacc_stat }}'
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+
+  likelihood:
+    kind: ConstGaussianLogLike
+    data_vector:
+    {% for stat in ['xip'] %} #, 'xim'
+    {% for i in range(5) %}
+    {% for j in range(i, 5) %}
+      - {{ stat }}_src{{ i }}_src{{ j }}
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}

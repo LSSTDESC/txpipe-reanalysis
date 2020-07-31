@@ -9,14 +9,23 @@ parameters:
   w0: -1.0
   wa: 0.0
 
-  # lens bin zero
-  {% for i in range(5) %}
+  {% for i in range(4) %}
   src{{ i }}_delta_z: 0.0
   {% endfor %}
 
+  
+  src0_m_bias: -0.0128
+  src1_m_bias: -0.0104
+  src2_m_bias: -0.0114
+  src3_m_bias: 0.0072
+  src4_m_bias: 0.0061
+
+  cterm_A_c: 0.0
+  cterm_delta_c: 0.0
+
 cosmosis:
   # the name of the sampler to use
-  sampler: maxlike
+  sampler: test
   # the output chain file name
   parameters:
     Omega_c: [0.1, 0.2545,  0.6]
@@ -50,37 +59,69 @@ cosmosis:
 
 two_point:
   module: firecrown.ccl.two_point
-  sacc_data: KV450_cosmicshear_H20.fits
+  sacc_data: ../data/KV450_cosmicshear_H20.fits
   sources:
-    {% for i in range(5) %}
+    {% for i in range(4) %}
     src{{ i }}:
       kind: WLSource
       sacc_tracer: trc{{ i }}
       systematics:
         - pz_delta_{{ i }}
+        - m_bias_{{ i }}
     {% endfor %}
 
   systematics:
-    {% for i in range(5) %}
+    {% for i in range(4) %}
     pz_delta_{{ i }}:
       kind: PhotoZShiftBias
       delta_z: src{{ i }}_delta_z
     {% endfor %}
 
+    {% for i in range(4) %}
+    m_bias_{{ i }}:
+      kind: MultiplicativeShearBias
+      m: src{{ i }}_m_bias
+    {% endfor %}
+
+    wl_constant_cterm:
+      kind: kv450_models.ConstantCTermSystematic
+      delta_c: cterm_delta_c
+
+    wl_cterm_xi_p:
+      kind: kv450_models.CTermSystematic
+      template_filename: ../data/KV450_c_term_xi_plus.txt
+      A_c: cterm_A_c
+
+    wl_cterm_xi_m:
+      kind: kv450_models.CTermSystematic
+      template_filename: ../data/KV450_c_term_xi_minus.txt
+      A_c: cterm_A_c
+
   statistics:
-    {% for i in range(5) %}
-    {% for j in range(i, 5) %}
-    cl_src{{ i }}_src{{ j }}:
+    {% for stat, sacc_stat in [('xip', 'galaxy_shear_xi_plus'), ('xim', 'galaxy_shear_xi_minus')] %}
+    {% for i in range(4) %}
+    {% for j in range(i, 4) %}
+    {{ stat }}_src{{ i }}_src{{ j }}:
       sources: ['src{{ i }}', 'src{{ j }}']
-      sacc_data_type: 'galaxy_shear_xi_plus'
+      sacc_data_type: '{{ sacc_stat }}'
+      systematics:
+        {% if stat == 'xip' %}
+        - wl_cterm_xi_p
+        - wl_constant_cterm
+        {% elif stat == 'xim' %}
+        - wl_cterm_xi_m
+        {% endif %}
+    {% endfor %}
     {% endfor %}
     {% endfor %}
 
   likelihood:
     kind: ConstGaussianLogLike
     data_vector:
-    {% for i in range(5) %}
-    {% for j in range(i, 5) %}
-      - cl_src{{ i }}_src{{ j }}
+    {% for stat in ['xip', 'xim'] %}
+    {% for i in range(4) %}
+    {% for j in range(i, 4) %}
+      - {{ stat }}_src{{ i }}_src{{ j }}
+    {% endfor %}
     {% endfor %}
     {% endfor %}

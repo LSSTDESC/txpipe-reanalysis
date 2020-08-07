@@ -54,8 +54,8 @@ cosmosis:
   # whether to use MPI - must run under mpirun to do this
   mpi: True
   emcee:
-    walkers: 10
-    nsample: 20
+    walkers: 5
+    nsamples: 2
   # parameters for individual samplers.
   # multinest - nested sampling
   #multinest:

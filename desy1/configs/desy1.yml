@@ -1,64 +1,70 @@
-# This larger run has nearly 79M galaxies in
-launcher: cori-mini
+# DESY1 Config File 
+# Inputs: Shear, Photometry, Redmagic Lens catalog, Shear Catalog Stacked Photo-z (from calibration) and Star Catalog
+# TODOs: Add DES exposure files for null tests
 
-# These site options tell the launcher to use shifter
+
+# Values in this section are accessible to all the different stages.
+# They can be overridden by individual stages though.
+global:
+    # This is read by many stages that read complete
+    # catalog data, and tells them how many rows to read
+    # at once
+    chunk_rows: 100000
+    # These mapping options are also read by a range of stages
+    pixelization: healpix
+    nside: 1024
+    sparse: False  # Generate sparse maps - faster if using small areas
+launcher:
+    name: mini
+    interval: 1.0
+
+# Where to run the pipeline: cori-interactive, cori-batch, or local
 site:
-    shifter: joezuntz/txpipe-dev
+    name: local
+    max_threads: 2
+
 
 modules: txpipe
 
+# Stages to run
 stages:
-    - name: TXSelector
-      nprocess: 32
-    - name: PZPDFMLZ
-      nprocess: 64
-      nodes: 2
-    - name: TXPhotozStack
-      nprocess: 16
-    - name: TXPhotozPlots
-    - name: TXDiagnosticMaps
-      nprocess: 8
-    - name: TXRandomCat
-      nodes: 1
-    - name: TXTwoPoint
-      nprocess: 2
-      nodes: 2
-      threads_per_process: 64
-    - name: TXTwoPointPlots
+    - name: TXSourceSelector
+    - name: TXIngestRedmagic
+    - name: TXTracerMetadata     # collate metadata
+    - name: TXSourceMaps
+    - name: TXExternalLensMaps
+    - name: TXAuxiliaryMaps
+    - name: TXSimpleMask
+    - name: TXDensityMaps
     - name: TXMapPlots
-    - name: TXDiagnosticPlots
-      nprocess: 8
-    - name: TXGammaTBrightStars
-      threads_per_process: 64
-    - name: TXGammaTDimStars
-      threads_per_process: 64
-    - name: TXBrighterFatterPlot
-    - name: TXRoweStatistics
-      nprocess: 2
-      nodes: 2
-      threads_per_process: 64
-    - name: TXPSFDiagnostics
+    - name: TXRandomCat          # generate lens bin random catalogs
+    - name: TXJackknifeCenters   # Split the area into jackknife regions
+    - name: TXTwoPoint           # Compute real-space 2-point correlations
+    - name: TXBlinding           # Blind the data following Muir et al
+    - name: TXTwoPointPlots      # Make plots of 2pt correlations
+    - name: TXRealGaussianCovariance   # Compute covariance of real-space correlations
+    #Not doing fourier space calculations for now 
+#    - name: TXTwoPointFourier          # Compute power spectra C_ell
+#    - name: TXFourierGaussianCovariance # Compute the C_ell covariance
+# these last two also require namaster
 
 # Where to put outputs
 output_dir: data/desy1/outputs
 
 
 # configuration settings
-config: examples/config.yml
-
-# On NERSC, set this before running:
-# export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
+config: /global/u1/e/elp25/txpipe-reanalysis/desy1/configs/config.yml
 
 inputs:
-    # See README for paths to download these files
-    shear_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/shear_catalog_desy1_merged.h5
-    photometry_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/photometry_catalog_desy1_merged.h5
-    photoz_trained_model: data/desy1/inputs/cosmoDC2_trees_i25.3.npy
-    calibration_table: data/desy1/inputs/sample_cosmodc2_w10year_errors.dat
+    shear_catalog: /global/cscratch1/sd/elp25/TXPipe/data/desy1/inputs/shear_catalog_desy1_masked.h5
+    photometry_catalog: /global/cscratch1/sd/elp25/TXPipe/data/desy1/inputs/photometry_catalog_desy1_masked.h5
     exposures: data/desy1/inputs/exposures.hdf5
     star_catalog: /global/projecta/projectdirs/lsst/groups/WL/projects/wl-txpipe-hack/DESY1/DES_psf_catalog.hdf5
-    # This file comes with the code
-    fiducial_cosmology: data/fiducial_cosmology.yml
+    #txpipe expects this calibration table but it is not currently used for this reanalysis
+    calibration_table:  /global/projecta/projectdirs/lsst/groups/WL/users/zuntz/data/cosmoDC2-1.1.4_oneyear_unit_response/sample_cosmodc2_w10year_errors.dat
+    fiducial_cosmology: /global/u1/e/elp25/txpipe-reanalysis/desy1/data/fiducial_cosmology.yml
+    redmagic_catalog: /global/u1/e/elp25/txpipe-reanalysis/desy1/python/newredmagic.fits
+    shear_photoz_stack: /global/cscratch1/sd/elp25/txpipe-reanalysis/desy1/data/shear_photoz_stack.hdf5
 
 # if supported by the launcher, restart the pipeline where it left off
 # if interrupted

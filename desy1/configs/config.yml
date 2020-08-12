@@ -13,7 +13,9 @@ TXSourceSelector:
     true_z: False
 
 TXSourceMaps:
-    sparse: True
+    pixelization: healpix
+    sparse: False
+    nside: 4096
 
 TXTwoPoint:
     bin_slop: 0.01
@@ -27,49 +29,48 @@ TXTwoPoint:
     verbose: 0
     var_methods: 'jackknife'
 
-TXTwoPointFourier:
-    chunk_rows: 100000
-    flip_g2: False
-
 TXDiagnosticPlots:
     psf_prefix: mcal_psf_
     shear_prefix: mcal_
 
 TXSourceMaps:
+    pixelization: healpix
     sparse: False  # Generate sparse maps - faster if using small areas
-    nside: 1024
+    nside: 4096
 
 TXLensMaps:
+    pixelization: healpix
     sparse: False  # Generate sparse maps - faster if using small areas
-    nside: 1024
+    nside: 4096
 
 # For redmagic mapping
 TXExternalLensMaps:
-    chunk_rows: 100000
+    chunk_rows: 100_000
     sparse: False
     pixelization: healpix
-    nside: 1024
+    nside: 4096
 
 
 TXMainMaps:
-    nside: 1024
+    pixelization: healpix
+    nside: 4096
     sparse: False
     
 TXIngestRedmagic:
     lens_zbin_edges: [0.15,0.3,0.45,0.6,0.75,0.9]
 
 TXAuxiliaryMaps:
-    nside: 1024
-    flag_exponent_max: 8
-    dilate: True
+    nside: 4096
+    sparse: False
+    dilate: False
     psf_prefix: mcal_psf_
     bright_obj_threshold: 16 # The magnitude threshold for a object to be counted as bright
     depth_band : i
-    snr_threshold: 3.0  # The S/N value to generate maps for (e.g. 5 for 5-sigma depth)
+    snr_threshold: 5.0  # The S/N value to generate maps for (e.g. 5 for 5-sigma depth)
     snr_delta: 1.0  # The range threshold +/- delta is used for finding objects at the boundary
     
 TXMapPlots:
-    projection: "cart"
+    projection: "moll"
 
 TXJackknifeCenters:
     npatch: 5
@@ -80,21 +81,9 @@ TXRealGaussianCovariance:
     nbins: 20
 
 TXDensityMaps:
-    nside: 1024
-
-TXTruthLensSelector:
-    # Mag cuts
-    input_pz: True
-    true_z: False
-    lens_zbin_edges: [0.1, 0.3, 0.5]
-    cperp_cut: 0.2
-    r_cpar_cut: 13.5
-    r_lo_cut: 16.0
-    r_hi_cut: 21.6
-    i_lo_cut: 17.5
-    i_hi_cut: 21.9
-    r_i_cut: 2.0
-    # may also need one for r_cpar_cut
+    pixelization: healpix
+    nside: 4096
+    sparse: False
 
 TXGammaTBrightStars: {}
 
@@ -106,4 +95,4 @@ TXGammaTFieldCenters: {}
 
 TXSimpleMask:
     depth_cut: 0
-    bright_object_max: 12
+    bright_object_max: 100

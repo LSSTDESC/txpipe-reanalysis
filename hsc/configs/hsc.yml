@@ -1,40 +1,54 @@
-# This larger run has nearly 79M galaxies in
-#launcher: cori-mini
+# HSC Config File 
+# Inputs: Shear, Photometry, Shear Catalog Stacked Photo-z (from calibration)
+# TODOs: Star catalog
+
+
+# Values in this section are accessible to all the different stages.
+# They can be overridden by individual stages though.
+global:
+    # This is read by many stages that read complete
+    # catalog data, and tells them how many rows to read
+    # at once
+    chunk_rows: 100000
+    # These mapping options are also read by a range of stages
+    pixelization: healpix
+    nside: 4096
+    sparse: False  # Generate sparse maps - faster if using small areas
 launcher:
     name: mini
     interval: 1.0
 
-# These site options tell the launcher to use shifter
-#site:
-#    shifter: joezuntz/txpipe-dev
+# Where to run the pipeline: cori-interactive, cori-batch, or local
 site:
-  image: joezuntz/txpipe
-  name: cori-interactive
-  max_threads: 128
+    name: local
+    max_threads: 2
 
 
 modules: txpipe
 
+# Stages to run
 stages:
     - name: TXSourceSelector
-      nprocess: 32
-    - name: TXLensSelector
-      nprocess: 32  
-    - name: PZPDFMLZ
-      nprocess: 64
-      nodes: 2
-    - name: TXPhotozStack
-      nprocess: 16
-    - name: TXRandomCat
-    - name: TXJackknifeCenters
-    - name: TXPhotozPlots
-    - name: TXDiagnosticMaps
-    - name: TXTwoPoint
-      threads_per_process: 64
-    - name: TXBlinding
-    - name: TXTwoPointPlots
+    - name: TXTruthLensSelector
+    - name: TXTracerMetadata     # collate metadata
+    - name: TXSourceMaps
+    - name: TXLensMaps
+    - name: TXAuxiliaryMaps
+    - name: TXSimpleMask
+    - name: TXDensityMaps
     - name: TXMapPlots
-    - name: TXDiagnosticPlots
+    - name: TXRandomCat          # generate lens bin random catalogs
+    - name: TXJackknifeCenters   # Split the area into jackknife regions
+    - name: TXTwoPoint           # Compute real-space 2-point correlations
+    - name: TXBlinding           # Blind the data following Muir et al
+    - name: TXTwoPointPlots      # Make plots of 2pt correlations
+    - name: TXRealGaussianCovariance   # Compute covariance of real-space correlations
+    #Not doing fourier space calculations for now 
+#    - name: TXTwoPointFourier          # Compute power spectra C_ell
+#    - name: TXFourierGaussianCovariance # Compute the C_ell covariance
+# these last two also require namaster
+
+
 
 # Where to put outputs
 output_dir: data/hsc/outputs
@@ -43,18 +57,17 @@ output_dir: data/hsc/outputs
 # configuration settings
 config: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/configs/hscconfig.yml
 
-# On NERSC, set this before running:
-# export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
-
 inputs:
     # See README for paths to download these files
-    shear_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/shear_catalog_hsc_nonmetacal.h5
-    photometry_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_nonmetacal.h5
+    shear_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/hsc_shear_catalog.hdf5
+    photometry_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/hsc/data/hsc_photometry_catalog.hdf5
     photoz_trained_model: data/hsc/inputs/cosmoDC2_trees_i25.3.npy
     calibration_table: data/hsc/inputs/sample_cosmodc2_w10year_errors.dat
     exposures: data/hsc/inputs/exposures.hdf5
     # This file comes with the code
     fiducial_cosmology: data/fiducial_cosmology.yml
+    lens_photoz_stack: /global/cscratch1/sd/elp25/txpipe-reanalysis/desy1/data/lens_photoz_stack.hdf5
+    shear_photoz_stack: /global/cscratch1/sd/elp25/txpipe-reanalysis/desy1/data/shear_photoz_stack.hdf5
 
 # if supported by the launcher, restart the pipeline where it left off
 # if interrupted

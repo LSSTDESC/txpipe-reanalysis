@@ -1,12 +1,3 @@
-
-PZPDFMLZ:
-    nz: 301
-    zmax: 3.0
-    chunk_rows: 100000
-
-TXPhotozStack:
-    chunk_rows: 100000
-    
 TXPhotozPlots:
     plot_src: True
     plot_lens: False
@@ -23,9 +14,10 @@ TXSourceSelector:
     nlens: 0
     # lens selection
     select_lens: False
-    apply_flag_cut: True
     shear_catalog_type: 'lensfit'
+    shear_prefix: ''
     input_pz: True
+    true_z: False
     # may also need one for r_cpar_cut
 
 TXLensSelector:
@@ -42,8 +34,7 @@ TXLensSelector:
     # may also need one for r_cpar_cut
 
 TXTwoPoint:
-    binslop: 0.1
-    delta_gamma: 0.02
+    binslop: 0.01
     do_pos_pos: False
     min_sep: 0.316
     max_sep: 316
@@ -51,30 +42,76 @@ TXTwoPoint:
     do_shear_shear: True
     do_shear_pos: False
     flip_g2: False
-    m_from_cat: True
-    c_from_cat: True
     shear_catalog_type: 'lensfit'
     # use true when using metacal shears
     verbose: 0
+    var_methods: 'jackknife'
 
-TXDiagnosticMaps:
-    chunk_rows: 100000  # Number of rows to process at once
-    sparse: True  # Generate sparse maps - faster if using small areas
-    snr_threshold: 10.0
-    snr_delta: 1.0
+TXDiagnosticPlots:
+    psf_prefix: psf_
+    shear_prefix: ''
+    shear_catalog_type: 'lensfit'
+
+TXSourceMaps:
     pixelization: healpix
-    nside: 1024
-    compute_lens: False
-    # pixelization: gnomonic
-    # # 
-    pixel_size: 0.2
-    ra_cent: 62.
-    dec_cent: -35.
-    npix_x: 60
-    npix_y: 60
-    shear_type: 'lensfit'
+    sparse: False  # Generate sparse maps - faster if using small areas
+    nside: 4096
+    shear_catalog_type: 'lensfit'
+    true_shear: False
+
+TXLensMaps:
+    pixelization: healpix
+    sparse: False  # Generate sparse maps - faster if using small areas
+    nside: 4096
+
+TXMainMaps:
+    pixelization: healpix
+    nside: 4096
+    sparse: False
+    shear_catalog_type: 'lensfit'
+
+TXAuxiliaryMaps:
+    nside: 4096
+    sparse: False
+    dilate: False
+    psf_prefix: mcal_psf_
+    bright_obj_threshold: 16 # The magnitude threshold for a object to be counted as bright
+    depth_band : i
+    snr_threshold: 5.0  # The S/N value to generate maps for (e.g. 5 for 5-sigma depth)
+    snr_delta: 1.0  # The range threshold +/- delta is used for finding objects at the boundary
+    shear_catalog_type: 'lensfit'
+    
+TXMapPlots:
+    projection: "moll"
+
+TXJackknifeCenters:
+    npatch: 5
+
+TXRealGaussianCovariance:
+    min_sep: 0.316
+    max_sep: 316
+    nbins: 31
+
+TXDensityMaps:
+    pixelization: healpix
+    nside: 4096
+    sparse: False
+    shear_catalog_type: 'lensfit'
+
+TXLensMaps:
+    nside: 4096
+
+TXGammaTBrightStars: {}
+
+TXGammaTDimStars: {}
+
+TXGammaTRandoms: {}
+
+TXGammaTFieldCenters: {}
+
+TXSimpleMask:
+    depth_cut: 0
+    bright_object_max: 100
+    shear_catalog_type: 'lensfit'
 
 
-TXTwoPointFourier:
-    chunk_rows: 100000
-    flip_g2: False

@@ -66,16 +66,9 @@ print('getting columns')
 
 dec        = hsc_shearall['dec']              
 T     = hsc_shearall['ishape_hsm_moments_11']+hsc_shearall['ishape_hsm_moments_22']                   
-flags = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] # hsm regauss failures      
-e1_d = hsc_shearall['ishape_hsm_regauss_e1']-hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1'] # Distortion definition
-e2_d = hsc_shearall['ishape_hsm_regauss_e2']-hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2']
-theta = np.arctan2(e2_d, e1_d)
-e_mod_d = np.sqrt(e1_d**2+e2_d**2) # Distortion module (Miralda-Escud\'e 91)
-e_mod_s = np.arctanh(e_mod_d) # Transforming to shear definition BJ02
-e1_s = e_mod_s*np.cos(theta)
-e2_s = e_mod_s*np.sin(theta)
-g1 = e1_s
-g2 = e2_s
+flags = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] # hsm regauss failures
+g1 = hsc_shearall['ishape_hsm_regauss_e1']
+g2 = hsc_shearall['ishape_hsm_regauss_e2']
 mag_err_i    = hsc_shearall['icmodel_mag_err'] 
 mag_err_r    = hsc_shearall['rcmodel_mag_err']
 mag_i    = hsc_shearall['icmodel_mag']     
@@ -86,9 +79,8 @@ Ixx = hsc_shearall['ishape_hsm_psfmoments_11']
 Iyy = hsc_shearall['ishape_hsm_psfmoments_22']
 Ixy = hsc_shearall['ishape_hsm_psfmoments_12']
 T = Ixx + Iyy
-e = (Ixx - Iyy + 2j * Ixy) / (Ixx + Iyy + 2*np.sqrt(Ixx*Iyy-Ixy**2))
-e1 = e.real
-e2 = e.imag
+e1 = (Ixx - Iyy) / T
+e2 = 2*Ixy / T
 psf_g1     = e1      
 psf_g2     = e2      
 s2n        = 1.086/hsc_shearall['icmodel_mag_err']        
@@ -121,7 +113,7 @@ f = h5.File(outputdir + 'shear_catalog_hsc_nonmetacal.h5', 'w')
 g = f.create_group('shear')
 for i in range(len(data)):
     g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)
-metadata = {'catalog_type':'lensfit'}
+metadata = {'catalog_type':'hsc'}
 g.attrs.update(metadata)
 # write in a group for information on the catalog type 
 f.close()

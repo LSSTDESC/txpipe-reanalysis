@@ -27,6 +27,11 @@ TXSourceSelector:
     shear_catalog_type: 'lensfit'
     shear_prefix: ''
     input_pz: True
+    i_hi_cut: 24.5
+    r_hi_cut: 99
+    i_lo_cut: 0
+    r_lo_cut: 0
+    true_z: True
     # may also need one for r_cpar_cut
 
 TXTruthLensSelector:
@@ -46,7 +51,7 @@ TXSimpleMask:
     depth_cut: 24.5
 
 TXMainMaps:
-    nside: 1024
+    nside: 256
 
 TXTwoPoint:
     binslop: 0.1

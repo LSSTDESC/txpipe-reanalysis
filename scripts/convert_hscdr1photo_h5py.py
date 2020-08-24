@@ -1,49 +1,109 @@
-import h5py
-import fitsio
 import numpy as np
-import argparse
+#from astropy.io import fits
+from astropy.table import Table, vstack
+import h5py as h5
+import numpy as np
 
-def setup_output(path, group, cat, cols, n):
-    f = h5py.File(path, 'w')
-    g = f.create_group(group)
-    for name in cols:
-        g.create_dataset(name, shape=(n,), dtype=cat[name].dtype)
-    return f
+hscdir = '/global/cfs/cdirs/lsst/groups/LSS/HSC_data/'
 
-def write_output(output_file, group_name, cols, start, end, data):
-    g = output_file[group_name]
-    for name in cols:
-        g[name][start:end] = data[name]
+def getdata(filename):
+    hsc_photometry = Table.read(hscdir + filename, memmap=True) 
+    return hsc_photometry 
 
-def photometry_catalog_formatter(data_hsc, output_path, photoz):
-    _data = dict()
-    _data['id'] = data_hsc['object_id']
-    _data['ra'] = data_hsc['ra']
-    _data['dec'] = data_hsc['dec']
-    for band in ['g','r','i','z','y']:
-        _data[f'{band}_mag'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'{band}_mag_err'] = data_hsc[f'{band}cmodel_mag_err']
-        _data[f'snr_{band}'] = 1.086/data_hsc[f'{band}cmodel_mag_err']
-    _data['u_mag']=99*np.ones(len(_data['ra']))
-    _data['u_mag_err']=99*np.ones(len(_data['ra']))
-    #_catalog_out = h5py.File(output_path, 'w')
-    #_catalog_out.create_dataset('photometry', data=pd.DataFrame(_data).to_records())
-    #_catalog_out.flush()
-    _data['redshift_true'] = data_hsc[photoz]
-    n = len(_data['ra'])
-    _f = setup_output(output_path, 'photometry', _data, _data.keys(), n)
-    write_output(_f, 'photometry', _data.keys(), 0, n, _data)
-    _f.flush()
-    _f.close()
+hscfiles = [ 'HSC_WIDE_GAMA09H.fits', 
+             'HSC_WIDE_GAMA15H.fits', 'HSC_WIDE_HECTOMAP.fits',
+             'HSC_WIDE_VVDS_part1.fits','HSC_WIDE_VVDS_part2.fits',
+             'HSC_WIDE_WIDE12H.fits','HSC_WIDE_XMM.fits']
+#'HSC_WIDE_AEGIS.fits'
 
-parser = argparse.ArgumentParser(description='Convert HSC catalog to TXPipe-friendly catalog')
-parser.add_argument('--input-path', '-i', type=str, default=None, dest='input_path',
-        help='Input path to convert')
-parser.add_argument('--output-path', '-o', type=str, default=None, dest='output_path',
-        help='Output path of converted shear catalog')
-parser.add_argument('--pz-col', type=str, default='pz_mean_eab', dest='photoz',
-        help='Photoz column name')
-args = parser.parse_args()
-data = fitsio.read(args.input_path)
-photometry_catalog_formatter(data, args.output_path, args.photoz)
+#for hscfile in hscfiles:
+#    print('processing file',hscfile)
+
+tables = []
+print('loading data')
+for i in range(len(hscfiles)):
+    d = getdata(hscfiles[i])
+    tables.append(d)
+    print('loaded data')
+    #Joining the tables
+hsc_shearall = vstack(tables)
+
+regauss_flag = (hsc_shearall['ishape_hsm_regauss_flags']==False)
+regaus_sigma_nan = (hsc_shearall['ishape_hsm_regauss_sigma'] !=np.nan)
+extendedness = (hsc_shearall['iclassification_extendedness']!=0)
+flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=2)
+regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
+regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
+regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
+regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
+imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
+blendedness_abs_flux = (hsc_shearall['iblendedness_abs_flux']< 10**(-0.375))
+gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=2)
+rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=2)
+zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=2)
+yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=2)
+
+ishape_hsm_regauss_e1_isnull = hsc_shearall['ishape_hsm_regauss_e1_isnull'] == False
+ishape_hsm_regauss_e2_isnull = hsc_shearall['ishape_hsm_regauss_e2_isnull'] == False
+ishape_hsm_regauss_derived_shape_weight_isnull = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] == False 
+ishape_hsm_regauss_derived_shear_bias_m_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m_isnull'] == False 
+ishape_hsm_regauss_derived_shear_bias_c1_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1_isnull'] == False 
+ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False 
+ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False 
+
+all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut)
+null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
+
+hsc_shearall = hsc_shearall[all_cuts&null_cuts]
+
+#Sorting by ID
+print('sorting data')
+hsc_shearall.sort('object_id')
+print('sorted data')
+
+print('getting columns')
+#Getting the photometry columns
+dec       = hsc_shearall['dec']
+g_mag     = hsc_shearall['gcmodel_mag']
+g_mag_err = hsc_shearall['gcmodel_mag_err']
+i_mag     = hsc_shearall['icmodel_mag']
+i_mag_err = hsc_shearall['icmodel_mag_err']
+objectId  = hsc_shearall['object_id']
+r_mag     = hsc_shearall['rcmodel_mag']
+r_mag_err = hsc_shearall['rcmodel_mag_err']
+ra        = hsc_shearall['ra']
+snr_g     = 1.086/g_mag_err
+snr_i     = 1.086/i_mag_err
+snr_r     = 1.086/r_mag_err
+u_mag     = hsc_shearall['gcmodel_mag']
+u_mag_err = hsc_shearall['gcmodel_mag_err']
+snr_u     = 1.086/u_mag_err
+y_mag     = hsc_shearall['ycmodel_mag']   #Placeholder
+y_mag_err = hsc_shearall['ycmodel_mag_err'] #Placeholder
+snr_y     = 1.086/y_mag_err           #Placeholder
+z_mag     = hsc_shearall['zcmodel_mag']    #Placeholder
+z_mag_err = hsc_shearall['zcmodel_mag_err'] #Placeholder
+snr_z     = 1.086/z_mag_err           #Placeholder
+mean_z          = hsc_shearall['pz_mean_eab']
+sigma_e = hsc_shearall['ishape_hsm_regauss_derived_sigma_e']
+redshift_true = hsc_shearall['pz_mean_eab']
+extendedness = hsc_shearall['iclassification_extendedness']
+flag = hsc_shearall['wl_fulldepth_fullcolor']
+print('loaded columns')
+#Dealing with unicode, string needs to be S12
+#objectId = np.array([a.encode('utf8') for a in objectId])
+
+data   = [dec, g_mag, g_mag_err, i_mag, i_mag_err, objectId, r_mag, r_mag_err, ra, snr_g, snr_i, snr_r, u_mag, u_mag_err, snr_u, y_mag, y_mag_err, snr_y, z_mag, z_mag_err, snr_z, mean_z, sigma_e, redshift_true,extendedness, flag]
+
+dnames = ['dec', 'mag_g', 'mag_g_err', 'mag_i', 'mag_i_err', 'objectId', 'mag_r', 'mag_r_err', 'ra', 'snr_g', 'snr_i', 'snr_r', 'mag_u', 'mag_u_err', 'snr_u', 'mag_y', 'mag_y_err', 'snr_y', 'mag_z', 'mag_z_err', 'snr_z', 'mean_z', 'sigma_e','redshift_true','extendedness', 'wl_fulldepth_fullcolor']
+
+print('saving file')
+#Saving the h5 file...
+outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
+#f = h5.File(outputdir + 'hsc_photometry_catalog_'+hscfile[:-5]+'.hdf5', 'w')
+f = h5.File(outputdir + 'photometry_catalog_hsc.h5', 'w')
+g = f.create_group('photometry')
+for i in range(len(data)):
+    g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)
+f.close()
 

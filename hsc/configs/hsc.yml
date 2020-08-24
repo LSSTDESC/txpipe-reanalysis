@@ -32,11 +32,6 @@ stages:
       nprocess: 32
     - name: TXTruthLensSelector
       nprocess: 32  
-      #- name: PZPDFMLZ
-      #nprocess: 64
-      #nodes: 2
-      #- name: TXPhotozStack
-      #nprocess: 1
     - name: TXTracerMetadata
     - name: TXAuxiliaryMaps
     - name: TXTrueNumberDensity
@@ -47,22 +42,22 @@ stages:
     - name: TXSimpleMask
     - name: TXDensityMaps
     - name: TXNoiseMaps
-      #- name: TXDiagnosticMaps
     - name: TXTwoPoint
       threads_per_process: 64
     - name: TXTwoPointFourier
       threads_per_process: 64
-    - name: TXBlinding
-    - name: TXTwoPointPlots
-    - name: TXMapPlots
-      #- name: TXDiagnosticPlots
-
+      #- name: TXBlinding
+      #- name: TXTwoPointPlots
+      #- name: TXMapPlots
+    - name: TXDiagnosticPlots
+    - name: TXFourierGaussianCovariance
+      threads_per_process: 64
 # Where to put outputs
 output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs
 
 
 # configuration settings
-config: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig.yml
+config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig.yml
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed

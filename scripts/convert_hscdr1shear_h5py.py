@@ -1,108 +1,119 @@
-import h5py
-import fitsio
+#!/usr/env python
+"""
+.. module:: convert_hscshear_h5py
+:synopsis: Script to get the HSC shear info from the shear catalog and save as a h5 file.
+"""
+
 import numpy as np
-import argparse
+import numpy.random as random
+from astropy.table import Table, vstack
+import h5py as h5
 
-def setup_output(path, group, cat, cols, n):
-    f = h5py.File(path, 'w')
-    g = f.create_group(group)
-    for name in cols:
-        g.create_dataset(name, shape=(n,), dtype=cat[name].dtype)
-    return f
+hscdir = '/global/cfs/cdirs/lsst/groups/LSS/HSC_data/'
 
-def write_output(output_file, group_name, cols, start, end, data):
-    g = output_file[group_name]
-    for name in cols:
-        g[name][start:end] = data[name]
+def getdata(filename):
+    hsc_shear = Table.read(hscdir + filename, memmap=True) 
+    return hsc_shear
 
-def shear_catalog_formatter(data_hsc, output_path, photo_z, delta_gamma=0.02):
-    _data = dict()
-    data_hsc = data_hsc[data_hsc['iclassification_extendedness']==1] # Selecting galaxies
-    _data['id'] = data_hsc['object_id']
-    #_data['ra'] = data_hsc['ira']
-    #_data['dec'] = data_hsc['idec']
-    _data['ra'] = data_hsc['ra']
-    _data['dec'] = data_hsc['dec']
-    _data['mcal_T'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
-    _data['mcal_T_1p'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
-    _data['mcal_T_1m'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
-    _data['mcal_T_2p'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
-    _data['mcal_T_2m'] = data_hsc['ishape_hsm_moments_11']+data_hsc['ishape_hsm_moments_22']
-    w_tot = np.sum(data_hsc['ishape_hsm_regauss_derived_shape_weight'])
-    m =  np.sum(data_hsc['ishape_hsm_regauss_derived_shape_weight']*data_hsc['ishape_hsm_regauss_derived_shear_bias_m'])/w_tot
-    R = 1 - np.sum(data_hsc['ishape_hsm_regauss_derived_shape_weight']*data_hsc['ishape_hsm_regauss_derived_sigma_e'])/w_tot
-    e1_d = data_hsc['ishape_hsm_regauss_e1'] # Distortion definition
-    e2_d = data_hsc['ishape_hsm_regauss_e2']
-    e1_d = 1/(1+m)*(e1_d/2*R-data_hsc['ishape_hsm_regauss_derived_shear_bias_c1']) # Corrected but with the distortion definition
-    e2_d = 1/(1+m)*(e2_d/2*R-data_hsc['ishape_hsm_regauss_derived_shear_bias_c2'])
-    e_mod_d = np.sqrt(e1_d**2+e2_d**2) # Distortion module (Miralda-Escud\'e 91)
-    theta = np.arctan2(e2_d, e1_d)
-    e_mod_s = np.arctanh(e_mod_d) # Transforming to shear definition BJ02
-    e1_s = e_mod_s*np.cos(theta)
-    e2_s = e_mod_s*np.sin(theta)
-    _data['mcal_g1'] = e1_s
-    _data['mcal_g2'] = e2_s
-    _data['mcal_s2n'] = 1.086/data_hsc['icmodel_mag_err']
-    _data['mcal_s2n_1p'] = 1.086/data_hsc['icmodel_mag_err']
-    _data['mcal_s2n_2p'] = 1.086/data_hsc['icmodel_mag_err']
-    _data['mcal_s2n_1m'] = 1.086/data_hsc['icmodel_mag_err']
-    _data['mcal_s2n_2m'] = 1.086/data_hsc['icmodel_mag_err']
-    _data['i_mag'] = data_hsc['icmodel_mag']
-    _data['i_mag_err'] = data_hsc['icmodel_mag_err']
-    _data['mcal_g1_1p'] = _data['mcal_g1']+delta_gamma
-    _data['mcal_g2_1p'] = _data['mcal_g2']+delta_gamma
-    _data['mcal_g1_1m'] = _data['mcal_g1']
-    _data['mcal_g2_1m'] = _data['mcal_g2']
-    _data['mcal_g1_2p'] = _data['mcal_g1']+delta_gamma
-    _data['mcal_g2_2p'] = _data['mcal_g2']+delta_gamma
-    _data['mcal_g1_2m'] = _data['mcal_g1']
-    _data['mcal_g2_2m'] = _data['mcal_g2']
-    _data['mcal_flags'] = data_hsc['ishape_hsm_regauss_derived_shape_weight_isnull']
-    Ixx = data_hsc['ishape_hsm_psfmoments_11']
-    Iyy = data_hsc['ishape_hsm_psfmoments_22']
-    Ixy = data_hsc['ishape_hsm_psfmoments_12']
-    _data['mean_z'] = data_hsc[photo_z]
-    _data['mean_z_1p'] = _data['mean_z']
-    _data['mean_z_1m'] = _data['mean_z']
-    _data['mean_z_2p'] = _data['mean_z']
-    _data['mean_z_2m'] = _data['mean_z']
-    _data['redshift_true'] = _data['mean_z']  # To make photo-z binning
-    for band in ['g','r','i','z','y']:
-        _data[f'mcal_mag_{band}'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'mcal_mag_err_{band}'] = data_hsc[f'{band}cmodel_mag_err']
-        _data[f'mcal_mag_{band}_1p'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'mcal_mag_err_{band}_1p'] = data_hsc[f'{band}cmodel_mag_err']
-        _data[f'mcal_mag_{band}_1m'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'mcal_mag_err_{band}_1m'] = data_hsc[f'{band}cmodel_mag_err']
-        _data[f'mcal_mag_{band}_2m'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'mcal_mag_err_{band}_2m'] = data_hsc[f'{band}cmodel_mag_err']
-        _data[f'mcal_mag_{band}_2p'] = data_hsc[f'{band}cmodel_mag']
-        _data[f'mcal_mag_err_{band}_2p'] = data_hsc[f'{band}cmodel_mag_err']
-    # Conversion of moments to e1, e2
-    T = Ixx + Iyy
-    e = (Ixx - Iyy + 2j * Ixy) / (Ixx + Iyy)
-    e1 = e.real
-    e2 = e.imag
-    _data['mcal_psf_g1'] = e1
-    _data['mcal_psf_g2'] = e2
-    _data['mcal_psf_T_mean'] = T
-    _data['mcal_mag'] = _data['i_mag']
-    _data['mcal_mag_err'] = _data['i_mag_err']
-    n = len(_data['ra'])
-    _f = setup_output(output_path, 'metacal', _data, _data.keys(), n)
-    write_output(_f, 'metacal', _data.keys(), 0, n, _data)
-    _f.flush()
-    _f.close()
-
-parser = argparse.ArgumentParser(description='Convert HSC catalog to TXPipe-friendly catalog')
-parser.add_argument('--input-path', '-i', type=str, default=None, dest='input_path',
-        help='Input path to convert')
-parser.add_argument('--output-path', '-o', type=str, default=None, dest='output_path',
-        help='Output path of converted shear catalog')
-parser.add_argument('--pz-col', type=str, default='pz_mean_eab', dest='photo_z',
-        help='Photo-z column to use')
-args = parser.parse_args()
-data = fitsio.read(args.input_path)
-shear_catalog_formatter(data, args.output_path, args.photo_z)
+hscfiles = ['HSC_WIDE_GAMA09H.fits',
+             'HSC_WIDE_GAMA15H.fits', 'HSC_WIDE_HECTOMAP.fits',
+             'HSC_WIDE_VVDS_part1.fits','HSC_WIDE_VVDS_part2.fits',
+             'HSC_WIDE_WIDE12H.fits','HSC_WIDE_XMM.fits']
+tables = []
+print('loading data')
+for i in range(len(hscfiles)):
+    d = getdata(hscfiles[i])
+    tables.append(d)
+print('loaded data')
+#Joining the tables
+hsc_shearall = vstack(tables)
 
 
+regauss_flag = (hsc_shearall['ishape_hsm_regauss_flags']==False)
+regaus_sigma_nan = (hsc_shearall['ishape_hsm_regauss_sigma'] !=np.nan)
+extendedness = (hsc_shearall['iclassification_extendedness']!=0)
+flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=2)
+regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
+regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
+regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
+regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
+imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
+blendedness_abs_flux = (hsc_shearall['iblendedness_abs_flux']< 10**(-0.375))
+gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=2)
+rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=2)
+zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=2)
+yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=2)
+
+ishape_hsm_regauss_e1_isnull = hsc_shearall['ishape_hsm_regauss_e1_isnull'] == False
+ishape_hsm_regauss_e2_isnull = hsc_shearall['ishape_hsm_regauss_e2_isnull'] == False
+ishape_hsm_regauss_derived_shape_weight_isnull = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_m_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_c1_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1_isnull'] == False
+ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False
+ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False
+
+all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut)
+null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
+
+hsc_shearall = hsc_shearall[all_cuts&null_cuts]
+
+#Sorting by ID
+print('sorting data')
+hsc_shearall.sort('object_id')
+print('sorted data')
+
+print('getting columns')
+
+dec        = hsc_shearall['dec']              
+T     = hsc_shearall['ishape_hsm_moments_11']+hsc_shearall['ishape_hsm_moments_22']                   
+flags = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] # hsm regauss failures
+g1 = hsc_shearall['ishape_hsm_regauss_e1']
+g2 = hsc_shearall['ishape_hsm_regauss_e2']
+mag_err_i    = hsc_shearall['icmodel_mag_err'] 
+mag_err_r    = hsc_shearall['rcmodel_mag_err']
+mag_i    = hsc_shearall['icmodel_mag']     
+mag_r    = hsc_shearall['rcmodel_mag'] 
+psf_T_mean = hsc_shearall['ishape_hsm_psfmoments_11']+ hsc_shearall['ishape_hsm_psfmoments_22']
+# Conversion of moments to e1, e2
+Ixx = hsc_shearall['ishape_hsm_psfmoments_11']
+Iyy = hsc_shearall['ishape_hsm_psfmoments_22']
+Ixy = hsc_shearall['ishape_hsm_psfmoments_12']
+T = Ixx + Iyy
+e1 = (Ixx - Iyy) / T
+e2 = 2*Ixy / T
+psf_g1     = e1      
+psf_g2     = e2      
+s2n        = 1.086/hsc_shearall['icmodel_mag_err']        
+mean_z          = hsc_shearall['pz_mean_eab'] 
+objectId        = hsc_shearall['object_id']    
+ra              = hsc_shearall['ra']
+snr_i           = 1.086/mag_err_i
+snr_r           = 1.086/mag_err_r
+weight = hsc_shearall['ishape_hsm_regauss_derived_shape_weight']
+m = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m']
+c1 = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1']
+c2 = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2']
+sigma_e = hsc_shearall['ishape_hsm_regauss_derived_sigma_e']
+flag = hsc_shearall['wl_fulldepth_fullcolor']
+print('loaded columns')
+#Dealing with unicode, string needs to be S12
+#tilename = np.array([a.encode('utf8') for a in tilename])
+#objectId = np.array([a.encode('utf8') for a in objectId])
+#region   = np.array([a.encode('utf8') for a in region])
+
+#Saving the data as h5file
+data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z, flag]
+
+dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true', 'wl_fulldepth_fullcolor']
+
+outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
+print('saving file, ',outputdir + 'shear_catalog_hsc.h5')
+
+f = h5.File(outputdir + 'shear_catalog_hsc.h5', 'w')
+g = f.create_group('shear')
+for i in range(len(data)):
+    g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)
+metadata = {'catalog_type':'hsc'}
+g.attrs.update(metadata)
+# write in a group for information on the catalog type 
+f.close()

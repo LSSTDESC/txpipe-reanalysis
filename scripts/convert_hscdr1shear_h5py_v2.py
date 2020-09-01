@@ -37,12 +37,12 @@ regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
 regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
 regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
 regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
-imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
+# imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
 blendedness_abs_flux = (hsc_shearall['iblendedness_abs_flux']< 10**(-0.375))
-gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=2)
-rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=2)
-zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=2)
-yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=2)
+gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=5)
+rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=5)
+zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=5)
+yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=5)
 
 ishape_hsm_regauss_e1_isnull = hsc_shearall['ishape_hsm_regauss_e1_isnull'] == False
 ishape_hsm_regauss_e2_isnull = hsc_shearall['ishape_hsm_regauss_e2_isnull'] == False
@@ -71,7 +71,9 @@ g1 = hsc_shearall['ishape_hsm_regauss_e1']
 g2 = hsc_shearall['ishape_hsm_regauss_e2']
 mag_err_i    = hsc_shearall['icmodel_mag_err'] 
 mag_err_r    = hsc_shearall['rcmodel_mag_err']
-mag_i    = hsc_shearall['icmodel_mag']     
+mag_i    = hsc_shearall['icmodel_mag']
+a_i = hsc_shearall['a_i']
+a_r = hsc_shearall['a_r']
 mag_r    = hsc_shearall['rcmodel_mag'] 
 psf_T_mean = hsc_shearall['ishape_hsm_psfmoments_11']+ hsc_shearall['ishape_hsm_psfmoments_22']
 # Conversion of moments to e1, e2
@@ -102,9 +104,12 @@ print('loaded columns')
 #region   = np.array([a.encode('utf8') for a in region])
 
 #Saving the data as h5file
-data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z]
+data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, a_i, a_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z,
+        objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z]
 
-dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true']
+dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'a_i', 'a_r', 'psf_T_mean',
+          'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2',
+          'sigma_e', 'weight', 'redshift_true']
 
 outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
 print('saving file, ',outputdir + 'shear_catalog_hsc_nonmetacal.h5')

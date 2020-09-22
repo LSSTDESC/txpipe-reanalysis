@@ -1,10 +1,10 @@
 # Dark Energy Y1 Reanalysis Config File
-# TODO: Change to use Omega_m instead of Omega_c
 # Using same priors as table II: https://arxiv.org/pdf/1708.01538.pdf 
 # following https://github.com/LSSTDESC/firecrown/blob/master/examples/des_y1_3x2pt/des_y1_3x2pt.yaml 
+#TODO: add xi_minus
 
 # This section defines fiducial values for all parameters.
-#TODO: update these, currently using example values, check default tau 
+#TODO: update these, currently using example values 
 parameters:
   Omega_k: 0.0
   Omega_b: 0.0485
@@ -12,10 +12,10 @@ parameters:
   w0: -1.0
   wa: 0.0
   h: 0.682
-  #A_s: 2.75e-9 TODO: get A_s to work 
+  #A_s: 2.75e-9  
   sigma8: 0.8
   n_s: 0.971
-  transfer_function: eisenstein_hu
+  transfer_function: boltzmann_camb
 
   # IA model
   A0: 0.5
@@ -142,7 +142,7 @@ priors: #TODO: add omega_nuh^2
 
 two_point:
   module: firecrown.ccl.two_point
-  sacc_data: ../data/summary_statistics_real.sacc
+  sacc_data: ../data/twopoint_data_real_published_blinded.sacc
   sources:
     {% for i in range(4) %}
     src{{ i }}:

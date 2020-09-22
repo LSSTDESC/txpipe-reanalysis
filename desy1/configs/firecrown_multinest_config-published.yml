@@ -12,8 +12,8 @@ parameters:
   w0: -1.0
   wa: 0.0
   h: 0.682
-  #A_s: 2.75e-9
-  sigma8: 0.8
+  A_s: 2.75e-9 
+  #sigma8: 0.8
   n_s: 0.971
   transfer_function: boltzmann_camb
 
@@ -37,12 +37,12 @@ parameters:
 
 cosmosis:
   # the name of the sampler to use
-  sampler: emcee
+  sampler: multinest
   # the output chain file name
   parameters:
     # cosmology parameters - min, start, max
-    #A_s:  [0,2.75e-9,1.0e-7] 
-    sigma8: [0.2,0.8,1.5]
+    A_s:  [0,2.75e-9,1.0e-7] 
+    #sigma8: [0.2,0.8,1.5]
     omega_c: [0.1,0.25,0.9]
     omega_b: [0.03,0.05,0.07]
     # TODO: omega_nu*h^2
@@ -66,31 +66,37 @@ cosmosis:
   # whether to use MPI - must run under mpirun to do this
   mpi: True
   # parameters for individual samplers.
-  # multinest - nested sampling
-  #DESY1 cosmic shear settings 
-  emcee:
-    burn: 0.3
-    walkers: 160
-    samples: 10000
-    nsteps: 5
-  # for computing a grid of models - works for up to about three dimensions
-  # but quickly becomes untenable above that.
-  #grid:
-    # the number of grid points in each dimension.  Total number of models
-    # is nsample_dimension ** ndim
-  #  nsample_dimension: 25
+  # DES Y1 cosmic shear settings 
+  multinest:
+    # for info on these parameter see the multinest documentation.
+    max_iterations: 50000 # max number of iterations 
+    tolerance: 0.1 # evidence tolerance factor 
+    constant_efficiency: False # see docs, but recommended False
+    live_points: 500 # number of live points 
+    efficiency: 0.3 # sampling efficiency 
+    resume: False
+    update_interval: 200
+    random_seed: -1
+    feedback: True # update sampling progress 
+    ins: True # whether or not to do importance nested sampling
+    log_zero: -1000000.0 # points with loglike < logZero will be ignored by MultiNest
+    mode_separation: False
+    constant_efficiency: False
+    max_modes: 100
+    cluster_dimensions: -1
+    mode_ztolerance: 0.5
 
 priors: #TODO: add omega_nuh^2 
   module: firecrown.priors
 
-  #A_s: 
-  #  kind: uniform
-  #  loc: 0.5e-9
-  #  scale: 4.5e-9
-  sigma8: 
+  A_s: 
     kind: uniform
-    loc: 0.2
-    scale: 1.4
+    loc: 0.5e-9
+    scale: 4.5e-9
+  #sigma8: 
+  #  kind: uniform
+  #  loc: 0.2
+  #  scale: 1.4
   Omega_b:
     kind: uniform
     loc: 0.03
@@ -164,6 +170,18 @@ two_point:
       m: src{{ i }}_mult_bias
     {% endfor %}
 
+
+#, ('xim', 'galaxy_shear_xi_minus')
+   # {% for stat, sacc_stat in [('xip', 'galaxy_shear_xi_plus')] %}
+   # {% for i in range(4) %}
+   # {% for j in range(i, 4) %}
+   # {{ stat }}_src{{ i }}_src{{ j }}:
+   #   sources: ['src{{ i }}', 'src{{ j }}']
+   #   sacc_data_type: '{{ sacc_stat }}'
+    #{% endfor %}
+    #{% endfor %}
+    #{% endfor %}
+  
   statistics: 
     xip_src0_src0:
       sources: ['src0', 'src0']
@@ -172,19 +190,19 @@ two_point:
       ell_or_theta_max: 250.0
 
     xip_src0_src1:
-      sources: ['src1', 'src0']
+      sources: ['src0', 'src1']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 7.195005
       ell_or_theta_max: 250.0
 
     xip_src0_src2:
-      sources: ['src2', 'src0']
+      sources: ['src0', 'src2']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 5.715196
       ell_or_theta_max: 250.0
 
     xip_src0_src3:
-      sources: ['src3', 'src0']
+      sources: ['src0', 'src3']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 5.715196
       ell_or_theta_max: 250.0
@@ -196,13 +214,13 @@ two_point:
       ell_or_theta_max: 250.0
 
     xip_src1_src2:
-      sources: ['src2', 'src1']
+      sources: ['src1', 'src2']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 4.539741
       ell_or_theta_max: 250.0
    
     xip_src1_src3:
-      sources: ['src3', 'src1']
+      sources: ['src1', 'src3']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 4.539741
       ell_or_theta_max: 250.0
@@ -214,7 +232,7 @@ two_point:
       ell_or_theta_max: 250.0
      
     xip_src2_src3:
-      sources: ['src3', 'src2']
+      sources: ['src2', 'src3']
       sacc_data_type: 'galaxy_shear_xi_plus'
       ell_or_theta_min: 3.606045
       ell_or_theta_max: 250.0

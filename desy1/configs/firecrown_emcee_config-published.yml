@@ -12,8 +12,8 @@ parameters:
   w0: -1.0
   wa: 0.0
   h: 0.682
-  #A_s: 2.75e-9
-  sigma8: 0.8
+  A_s: 2.75e-9 
+  #sigma8: 0.8
   n_s: 0.971
   transfer_function: boltzmann_camb
 
@@ -41,8 +41,8 @@ cosmosis:
   # the output chain file name
   parameters:
     # cosmology parameters - min, start, max
-    #A_s:  [0,2.75e-9,1.0e-7] 
-    sigma8: [0.2,0.8,1.5]
+    A_s:  [0,2.75e-9,1.0e-7] 
+    #sigma8: [0.2,0.8,1.5]
     omega_c: [0.1,0.25,0.9]
     omega_b: [0.03,0.05,0.07]
     # TODO: omega_nu*h^2
@@ -83,14 +83,14 @@ cosmosis:
 priors: #TODO: add omega_nuh^2 
   module: firecrown.priors
 
-  #A_s: 
-  #  kind: uniform
-  #  loc: 0.5e-9
-  #  scale: 4.5e-9
-  sigma8: 
+  A_s: 
     kind: uniform
-    loc: 0.2
-    scale: 1.4
+    loc: 0.5e-9
+    scale: 4.5e-9
+  #sigma8: 
+  #  kind: uniform
+  #  loc: 0.2
+  #  scale: 1.4
   Omega_b:
     kind: uniform
     loc: 0.03

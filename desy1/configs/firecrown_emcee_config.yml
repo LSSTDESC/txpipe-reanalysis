@@ -1,0 +1,237 @@
+# Dark Energy Y1 Reanalysis Config File
+# Using same priors as table II: https://arxiv.org/pdf/1708.01538.pdf 
+# following https://github.com/LSSTDESC/firecrown/blob/master/examples/des_y1_3x2pt/des_y1_3x2pt.yaml
+#TODO: add xi_minus
+
+# This section defines fiducial values for all parameters.
+#TODO: update these, currently using example values 
+parameters:
+  Omega_k: 0.0
+  Omega_b: 0.0485
+  Omega_c: 0.2545
+  w0: -1.0
+  wa: 0.0
+  h: 0.682
+  #A_s: 2.75e-9
+  sigma8: 0.8
+  n_s: 0.971
+  transfer_function: boltzmann_camb
+
+  # IA model
+  A0: 0.5
+  eta_ia: 0.0
+
+  # these parameters are fixed
+  alphag_ia: -1
+  z_piv_ia: 0.62
+
+  # shear errors
+  {% for i in range(4) %}
+  src{{ i }}_mult_bias: 0.0
+  {% endfor %}
+  
+  # photoz shifts for sources
+  {% for loc in [-0.001, -0.019, 0.009, -0.018] %}
+  src{{ loop.index0 }}_delta_z: {{ loc }}
+  {% endfor %}
+
+cosmosis:
+  # the name of the sampler to use
+  sampler: emcee
+  # the output chain file name
+  parameters:
+    # cosmology parameters - min, start, max
+    #A_s:  [0,2.75e-9,1.0e-7] 
+    sigma8: [0.2,0.8,1.5]
+    omega_c: [0.1,0.25,0.9]
+    omega_b: [0.03,0.05,0.07]
+    # TODO: omega_nu*h^2
+    h: [0.3,0.725,1.0] 
+    n_s: [0.7,0.97,1.3]
+    src0_mult_bias: [-0.1, 0.0,  0.1]
+    src1_mult_bias: [-0.1, 0.0,  0.1]
+    src2_mult_bias: [-0.1, 0.0,  0.1]
+    src3_mult_bias: [-0.1, 0.0,  0.1]
+    
+    src0_delta_z: [-0.1, 0.0,  0.1]
+    src1_delta_z: [-0.1, 0.0,  0.1]
+    src2_delta_z: [-0.1, 0.0,  0.1]
+    src3_delta_z: [-0.1, 0.0,  0.1]
+  # whether to output more debugging information on failure
+  # and regard python exceptions as errors (instead of just
+  # using -inf likelihoods)
+  debug: True
+  # suppress output information
+  quiet: False
+  # whether to use MPI - must run under mpirun to do this
+  mpi: True
+  # parameters for individual samplers.
+  # multinest - nested sampling
+  #DESY1 cosmic shear settings 
+  emcee:
+    burn: 0.3
+    walkers: 160
+    samples: 10000
+    nsteps: 5
+  # for computing a grid of models - works for up to about three dimensions
+  # but quickly becomes untenable above that.
+  #grid:
+    # the number of grid points in each dimension.  Total number of models
+    # is nsample_dimension ** ndim
+  #  nsample_dimension: 25
+
+priors: #TODO: add omega_nuh^2 
+  module: firecrown.priors
+
+  #A_s: 
+  #  kind: uniform
+  #  loc: 0.5e-9
+  #  scale: 4.5e-9
+  sigma8: 
+    kind: uniform
+    loc: 0.2
+    scale: 1.4
+  Omega_b:
+    kind: uniform
+    loc: 0.03
+    scale: 0.04  # 0.07 - 0.03
+  Omega_c:
+    kind: uniform
+    loc: 0.05
+    scale: 0.84  # 0.87 - 0.03
+  #w0:
+  #  kind: uniform
+  #  loc: -2.0
+  #  scale: 1.667  # -0.333 - -2
+  h:
+    kind: uniform
+    loc: 0.55
+    scale: 0.35  # 0.90 - 0.55
+  n_s:
+    kind: uniform
+    loc: 0.87
+    scale: 0.2  # 1.07 - 0.87
+  A0:
+    kind: uniform
+    loc: -5.0
+    scale: 10  # 5.0 -- 5
+  eta_ia:
+    kind: uniform
+    loc: -5.0
+    scale: 10  # 5.0 -- 5
+
+  {% for loc, scale in [(-0.001, 0.016), (-0.019, 0.013), (0.009, 0.011), (-0.018, 0.022)] %}
+  src{{ loop.index0 }}_delta_z:
+    kind: norm
+    loc: {{ loc }}
+    scale: {{ scale }}
+  {% endfor %}
+
+  {% for i in range(4) %}
+  src{{ i }}_mult_bias:
+    kind: norm
+    loc: 0.012
+    scale: 0.023
+  {% endfor %}
+
+two_point:
+  module: firecrown.ccl.two_point
+  sacc_data: ../data/twopoint_data_real_published_blinded.sacc
+  sources:
+    {% for i in range(4) %}
+    src{{ i }}:
+      kind: WLSource
+      sacc_tracer: source_{{ i }}
+    {% endfor %}
+
+  systematics:
+
+    {% for i in range(4) %}
+    delta_z_src{{ i }}:
+      kind: PhotoZShiftBias
+      delta_z: src{{ i }}_delta_z
+    {% endfor %}
+
+    des_ia:
+      kind: LinearAlignmentSystematic
+      alphaz: eta_ia
+      alphag: alphag_ia
+      z_piv: z_piv_ia
+
+    {% for i in range(4) %}
+    shear_bias_src{{ i }}:
+      kind: MultiplicativeShearBias
+      m: src{{ i }}_mult_bias
+    {% endfor %}
+
+  statistics: 
+    xip_src0_src0:
+      sources: ['src0', 'src0']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 7.195005
+      ell_or_theta_max: 250.0
+
+    xip_src0_src1:
+      sources: ['src1', 'src0']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 7.195005
+      ell_or_theta_max: 250.0
+
+    xip_src0_src2:
+      sources: ['src2', 'src0']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 5.715196
+      ell_or_theta_max: 250.0
+
+    xip_src0_src3:
+      sources: ['src3', 'src0']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 5.715196
+      ell_or_theta_max: 250.0
+
+    xip_src1_src1:
+      sources: ['src1', 'src1']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 4.539741
+      ell_or_theta_max: 250.0
+
+    xip_src1_src2:
+      sources: ['src2', 'src1']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 4.539741
+      ell_or_theta_max: 250.0
+   
+    xip_src1_src3:
+      sources: ['src3', 'src1']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 4.539741
+      ell_or_theta_max: 250.0
+
+    xip_src2_src2:
+      sources: ['src2', 'src2']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 3.606045
+      ell_or_theta_max: 250.0
+     
+    xip_src2_src3:
+      sources: ['src3', 'src2']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 3.606045
+      ell_or_theta_max: 250.0
+
+    xip_src3_src3:
+      sources: ['src3', 'src3']
+      sacc_data_type: 'galaxy_shear_xi_plus'
+      ell_or_theta_min: 3.606045
+      ell_or_theta_max: 250.0
+
+  likelihood:
+    kind: ConstGaussianLogLike
+    data_vector:
+    {% for stat in ['xip'] %} #, 'xim'
+    {% for i in range(4) %}
+    {% for j in range(i, 4) %}
+      - {{ stat }}_src{{ i }}_src{{ j }}
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}

@@ -28,6 +28,29 @@ TXSourceSelector:
     shear_prefix: ''
     input_pz: True
     i_hi_cut: 24.5
+    r_hi_cut: -99
+    i_lo_cut: -99
+    r_lo_cut: -99
+    true_z: True
+    # may also need one for r_cpar_cut
+
+TXHSCSourceSelector:
+    bands: ri #used for selection
+    T_cut: 0.0
+    s2n_cut: 10.0
+    max_rows: 1000
+    delta_gamma: 0.02
+    source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
+    chunk_rows: 100000
+    nsrc: 4
+    nlens: 0
+    # lens selection
+    select_lens: False
+    apply_flag_cut: True
+    shear_catalog_type: 'lensfit'
+    shear_prefix: ''
+    input_pz: True
+    i_hi_cut: 24.5
     r_hi_cut: 99
     i_lo_cut: 0
     r_lo_cut: 0
@@ -47,11 +70,11 @@ TXTruthLensSelector:
     r_i_cut: 100
     # may also need one for r_cpar_cut
 
-TXSimpleMask:
-    depth_cut: 24.5
+TXExternalMask:
+    ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096.fits'
 
 TXMainMaps:
-    nside: 256
+    nside: 2048
 
 TXTwoPoint:
     binslop: 0.1
@@ -65,7 +88,7 @@ TXTwoPoint:
     flip_g2: False
     m_from_cat: True
     c_from_cat: True
-    shear_catalog_type: 'lensfit'
+    shear_catalog_type: 'hsc'
     # use true when using metacal shears
     verbose: 0
 TXTrueNumberDensity:
@@ -78,14 +101,15 @@ TXAuxiliaryMaps:
 TXDiagnosticPlots:
     shear_prefix: ''
     psf_prefix: 'psf_'    
-TXDiagnosticMaps:
+
+    TXDiagnosticMaps:
     chunk_rows: 100000  # Number of rows to process at once
     sparse: True  # Generate sparse maps - faster if using small areas
     snr_threshold: 10.0
     snr_delta: 1.0
     pixelization: healpix
-    nside: 1024
-    compute_lens: False
+    nside: 2048
+    compute_lens: True
     # pixelization: gnomonic
     # # 
     pixel_size: 0.2
@@ -93,11 +117,14 @@ TXDiagnosticMaps:
     dec_cent: -35.
     npix_x: 60
     npix_y: 60
-    shear_type: 'lensfit'
+    shear_type: 'hsc'
 
 TXNoiseMaps:
     shear_prefix: ''
+    shear_catalog_type: 'hsc'
 
 TXTwoPointFourier:
     chunk_rows: 100000
     flip_g2: False
+    ell_min: 300
+    ell_max: 4096

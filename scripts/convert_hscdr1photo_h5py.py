@@ -34,6 +34,7 @@ extendedness = (hsc_shearall['iclassification_extendedness']!=0)
 flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=2)
 regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
 regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
+efinite = (np.isfinite(hsc_shearall['ishape_hsm_regauss_e1'])) & (np.isfinite(hsc_shearall['ishape_hsm_regauss_e2']))
 regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
 regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
 imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
@@ -51,7 +52,7 @@ ishape_hsm_regauss_derived_shear_bias_c1_isnull = hsc_shearall['ishape_hsm_regau
 ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False 
 ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False 
 
-all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut)
+all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut) & (efinite)
 null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
 
 hsc_shearall = hsc_shearall[all_cuts&null_cuts]
@@ -101,7 +102,7 @@ print('saving file')
 #Saving the h5 file...
 outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
 #f = h5.File(outputdir + 'hsc_photometry_catalog_'+hscfile[:-5]+'.hdf5', 'w')
-f = h5.File(outputdir + 'photometry_catalog_hsc.h5', 'w')
+f = h5.File(outputdir + 'photometry_catalog_hsc_nonmetacal.h5', 'w')
 g = f.create_group('photometry')
 for i in range(len(data)):
     g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)

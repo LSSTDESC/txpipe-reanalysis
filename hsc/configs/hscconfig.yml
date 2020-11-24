@@ -125,6 +125,9 @@ TXNoiseMaps:
 
 TXTwoPointFourier:
     chunk_rows: 100000
-    flip_g2: False
+    flip_g2: True
+    flip_g1: True
     ell_min: 300
     ell_max: 4096
+    n_ell: 20
+    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'

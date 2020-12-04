@@ -12,6 +12,10 @@ This project will hopefully help with the development of TXPipe and other DESC i
 * HSC public data: https://hsc.mtk.nao.ac.jp/ssp/data-release/
 * KiDS public data: http://kids.strw.leidenuniv.nl/availability.php
 
+## Overleaf 
+
+https://www.overleaf.com/9264561458qbqwnkfswtqd 
+
 ## Usage
 
 The scripts here will likely be using TXPipe, so it is likely that you will need to set the path before running 

@@ -130,4 +130,15 @@ TXTwoPointFourier:
     ell_min: 300
     ell_max: 4096
     n_ell: 20
-    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'
+    cache_dir: '/global/cscratch1/sd/ellison/cache_nmt'
+    deproject_syst_clustering: False
+    deproject_syst_weaklensing: True
+    systmaps_clustering_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/nc # use all maps in this directory
+    systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
+
+
+
+TXMapCorrelations:
+    supreme_path_root: /global/cscratch1/sd/ellison/test3/systmaps/cor
+    outlier_fraction: 0.05
+    nbin: 20

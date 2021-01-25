@@ -137,8 +137,3 @@ TXTwoPointFourier:
     systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
 
 
-
-TXMapCorrelations:
-    supreme_path_root: /global/cscratch1/sd/ellison/test3/systmaps/cor
-    outlier_fraction: 0.05
-    nbin: 20

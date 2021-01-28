@@ -130,10 +130,4 @@ TXTwoPointFourier:
     ell_min: 300
     ell_max: 4096
     n_ell: 20
-    cache_dir: '/global/cscratch1/sd/ellison/cache_nmt'
-    deproject_syst_clustering: False
-    deproject_syst_weaklensing: False
-    systmaps_clustering_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/nc # use all maps in this directory
-    systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
-
-
+    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'

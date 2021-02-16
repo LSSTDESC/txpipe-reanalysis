@@ -16,6 +16,9 @@ This project will hopefully help with the development of TXPipe and other DESC i
 
 https://www.overleaf.com/9264561458qbqwnkfswtqd 
 
+## Cosmosis Chains 
+https://www.dropbox.com/sh/b365wkr7m5w7k4t/AAChu-2nzGdRiNrS8WM7vMfGa?dl=0
+
 ## Usage
 
 The scripts here will likely be using TXPipe, so it is likely that you will need to set the path before running 

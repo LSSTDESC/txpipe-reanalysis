@@ -16,6 +16,8 @@ This project will hopefully help with the development of TXPipe and other DESC i
 
 https://www.overleaf.com/9264561458qbqwnkfswtqd
 
+### Running slide deck
+https://docs.google.com/presentation/d/1aUWz_GH6qGwQwfuZHeki_iAFnejr1vbv6Vck8QDcqVg/edit#slide=id.gbd68191e90_0_5
 
 ## Usage
 

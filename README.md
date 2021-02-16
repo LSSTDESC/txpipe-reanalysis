@@ -16,6 +16,9 @@ This project will hopefully help with the development of TXPipe and other DESC i
 
 https://www.overleaf.com/9264561458qbqwnkfswtqd 
 
+## Running Slide Deck 
+https://docs.google.com/presentation/d/1aUWz_GH6qGwQwfuZHeki_iAFnejr1vbv6Vck8QDcqVg/edit?usp=sharing
+
 ## Cosmosis Chains 
 https://www.dropbox.com/sh/b365wkr7m5w7k4t/AAChu-2nzGdRiNrS8WM7vMfGa?dl=0
 

@@ -1,0 +1,40 @@
+#This is a template for module description files
+name: shear_c_bias
+version: 1
+purpose: "Modify a set of calculated shear Xi_ell with an additive bias"
+url: ""
+interface: shear_c_bias.py
+attribution: [CosmoSIS Team]
+rules: ""
+cite: []
+
+assumptions:
+    - "Simple additive shear bias model: Xi^{ij}_theta -> Xi^{ij}_theta + c_i + c_j"
+
+explanation: |
+    Errors in cosmic shear measurement can lead to a additive factor
+    scaling the observed shear spectra.
+
+    This module scales the measured Xi_theta to account for that difference,
+    assuming model values of the additive factor c, either per bin or for all bins.
+
+    Since the bias can be different in different bins we have, for the general case
+    including cross-spectra:
+
+    Xi^{ij}_theta -> Xi^{ij}_theta + c_i + c_j
+
+params:
+    c_per_bin: "Boolean; default=T, If T use a separate c for each bin, otherwise a single global one"
+
+inputs:
+    wl_number_density:
+        nbin: "Integer, number of tomographic bins."
+    shear_calibration_parameters:
+        c0: "Real; only if c_per_bin=F. The additive bias for all the bins/"
+        c_i: "Integer; only if c_per_bin=F; for i=1..nbin. The additive bias for each bin."
+    shear_xi:
+        bin_i_j: "Real vector; for i and j=1..nbin. Shear xi."
+
+outputs:
+    shear_xi:
+        bin_i_j: "Real vector; for i and j=1..nbin. Modified shear xi."

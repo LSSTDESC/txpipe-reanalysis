@@ -1,0 +1,32 @@
+#This is a template for module description files
+name: shear_psf_bias
+version: "1.0"
+purpose: "Sum together intrinsic aligments with shear signal"
+url: ""
+interface: shear_psf_bias.py
+attribution: [CosmoSIS team]
+rules: ""
+cite: []
+
+assumptions:
+    - "Additive PSF correlations to the shear signal."
+
+explanation: |
+    "Additive cosmic shear PSF errors based on the systematics in:    http://kids.strw.leidenuniv.nl/cs2018/KiDS-VIKING-450_cosmic_shear_paper.pdf"
+
+params: {}
+
+inputs:
+    shear_xi_gg:
+        nbin:  "Integer; number of tomographic bins"
+        theta:  "Real 1D array; theta samples"
+        bin_{i}_{j}:  "Real 1D array; for series of i,j values, the shear-shear angular correlations"
+    psf_xi_ii:
+        bin_{i}_{j}:  "Real 1D array; for series of i,j values, the intrinsic-intrinsic psf correlations"
+
+outputs:
+    shear_xi:
+        nbin:  "Integer; number of tomographic bins"
+        theta:  "Real 1D array; theta samples of theory"
+        bin_{i}_{j}:  "Real 1D array; for series of i,j values, the total angular spectra Xi_theta"
+

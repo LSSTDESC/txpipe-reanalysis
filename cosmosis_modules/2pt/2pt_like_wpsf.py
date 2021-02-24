@@ -54,7 +54,7 @@ class TwoPointLikelihood(GaussianLikelihood):
         self.alpha_beta = options.get_bool("alpha_beta", False)
         self.do_xi_plus_psf = options.get_bool("do_xi_plus_psf", True)
         self.do_xi_minus_psf = options.get_bool("do_xi_minus_psf", True)
-        self.cal_section = options.get_string("cal_section", default=names.psf_errors)
+        self.cal_section = options.get_string("cal_section", default="psf_errors")
         self.nbin_combinations = options.get_int("nbin_combinations")
 
     def build_data(self):

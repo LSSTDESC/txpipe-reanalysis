@@ -10,7 +10,7 @@ def setup(options):
     do_xi_plus = options.get_bool(option_section, "do_xi_plus", True)
     do_xi_minus = options.get_bool(option_section, "do_xi_minus", True)
     cal_section = options.get_string(
-        option_section, "cal_section", default=names.psf_errors)
+        option_section, "cal_section", default="psf_errors")
 
     suffix = options.get_string(option_section, "suffix", "")
 

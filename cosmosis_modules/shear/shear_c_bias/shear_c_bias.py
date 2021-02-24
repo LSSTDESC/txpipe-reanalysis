@@ -20,7 +20,7 @@ def setup(options):
         # one global value
         c_per_bin = options.get_bool(option_section, "c_per_bin", True)
         cal_section = options.get_string(
-            option_section, "cal_section", default=names.c_systematic)
+            option_section, "cal_section", default="c_systematic")
         verbose = options.get_bool(option_section, "verbose", False)
         suffix = options.get_string(option_section, "suffix", "")
         print()

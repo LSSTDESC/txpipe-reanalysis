@@ -1,0 +1,19 @@
+#!/bin/bash -l
+#SBATCH -e slurm.err
+#SBATCH -N 1
+#SBATCH -n 76
+#SBATCH --time 20:00:00
+#SBATCH --mail-user=elp25@duke.edu
+#SBATCH --mail-type=ALL
+#SBATCH -p cosmology
+#SBATCH --mem-per-cpu=4G
+bash
+#source /hpc/group/cosmology/loadEnv.sh
+source /hpc/group/cosmology/cosmosisEnv.sh /hpc/group/cosmology/cosmosis_env
+export OMP_NUM_THREADS=1
+export SLURM_WHOLE=1
+export LD_LIBRARY_PATH=/hpc/home/elp25/cosmosis-standard-library/structure/mead/:$LD_LIBRARY_PATH
+#export OMP_PLACES=threads
+#export OMP_PROC_BIND=spread
+
+mpirun -n $SLURM_NTASKS cosmosis --mpi kv450_params.ini

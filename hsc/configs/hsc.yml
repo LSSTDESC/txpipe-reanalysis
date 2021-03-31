@@ -42,13 +42,16 @@ stages:
     - name: TXExternalMask
     - name: TXDensityMaps
     - name: TXNoiseMaps
+    - name: TXTwoPointTheoryFourier  
     - name: TXTwoPoint
       threads_per_process: 64
+    - name: TXBlinding
     - name: TXTwoPointFourier
       threads_per_process: 64
       #- name: TXBlinding
       #- name: TXTwoPointPlots
       #- name: TXMapPlots
+    - name: TXTwoPointTheoryReal
     - name: TXDiagnosticPlots
     - name: TXFourierGaussianCovariance
       threads_per_process: 64

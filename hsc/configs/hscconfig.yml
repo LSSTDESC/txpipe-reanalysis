@@ -17,7 +17,8 @@ TXSourceSelector:
     s2n_cut: 10.0
     max_rows: 1000
     delta_gamma: 0.02
-    source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
+    #source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
+    source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
     chunk_rows: 100000
     nsrc: 4
     nlens: 0
@@ -40,14 +41,15 @@ TXHSCSourceSelector:
     s2n_cut: 10.0
     max_rows: 1000
     delta_gamma: 0.02
-    source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
+    #source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
+    source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
     chunk_rows: 100000
     nsrc: 4
     nlens: 0
     # lens selection
     select_lens: False
     apply_flag_cut: True
-    shear_catalog_type: 'lensfit'
+    shear_catalog_type: 'hsc'
     shear_prefix: ''
     input_pz: True
     i_hi_cut: 24.5
@@ -125,9 +127,11 @@ TXNoiseMaps:
 
 TXTwoPointFourier:
     chunk_rows: 100000
+    nside: 2048
     flip_g2: True
     flip_g1: True
     ell_min: 300
     ell_max: 4096
     n_ell: 20
+    ell_edges: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
     cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'

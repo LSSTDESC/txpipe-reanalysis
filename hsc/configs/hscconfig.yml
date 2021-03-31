@@ -135,3 +135,9 @@ TXTwoPointFourier:
     n_ell: 20
     ell_edges: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
     cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'
+    deproject_syst_clustering: False
+    deproject_syst_weaklensing: False
+    systmaps_clustering_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/nc # use all maps in this directory
+    systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
+
+

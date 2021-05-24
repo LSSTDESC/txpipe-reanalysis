@@ -573,7 +573,7 @@ class TwoPointLikelihood(GaussianLikelihood):
                 psf_vec = np.array([A0 * A0 * psf_template for i in range(nbin_combinations)]).flatten()
                 theory += psf_vec
             else:
-                psf_vec = np.array([(alpha0 * alpha0)*pp+(alpha0 * beta0)*pq+(beta0*beta0)*qq for i in range(nbin_combinations)]).flatten()
+                psf_vec = np.array([(alpha0 * alpha0)*pp+(2*alpha0 * beta0)*pq+(beta0*beta0)*qq for i in range(nbin_combinations)]).flatten()
                 theory += psf_vec
         if t=='minus':
             if not alpha_beta:
@@ -593,7 +593,7 @@ class TwoPointLikelihood(GaussianLikelihood):
                 psf_vec = np.array([A0 * A0 * psf_template for i in range(nbin_combinations)]).flatten()
                 theory += psf_vec
             else:
-                psf_vec = np.array([(alpha0 * alpha0)*pp+(alpha0 * beta0)*pq+(beta0*beta0)*qq for i in range(nbin_combinations)]).flatten()
+                psf_vec = np.array([(alpha0 * alpha0)*pp+(2*alpha0 * beta0)*pq+(beta0*beta0)*qq for i in range(nbin_combinations)]).flatten()
                 theory += psf_vec
         return theory
 

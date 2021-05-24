@@ -61,9 +61,9 @@ def calibrate_section(block, section, m_a, m_b, input_m, verbose):
                 if verbose:
                     print("Calibrating {} bin {} {} by (1+{}) * (1+{}) = {}".format(section, i + 1, j + 1, m_a[i], m_b[j], (1 + m_a[i]) * (1 + m_b[j])))
                     if input_m != "F":
-                        m_a[i]+=m_corrections[i]
-                        m_b[j]+=m_corrections[j]
-                block[section, cl_name] *= (1 + m_a[i]) * (1 + m_b[j])
+                        block[section, cl_name] *= (1 + m_a[i]) * (1 + m_b[j]) * (1 + m_corrections[i]) * (1 + m_corrections[j])
+                    else:
+                        block[section, cl_name] *= (1 + m_a[i]) * (1 + m_b[j])
             elif verbose:
                 print("No {} bin {} {} to calibrate".format(section, i + 1, j + 1))
 

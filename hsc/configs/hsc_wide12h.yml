@@ -42,34 +42,32 @@ stages:
     - name: TXExternalMask
     - name: TXDensityMaps
     - name: TXNoiseMaps
-    - name: TXTwoPointTheoryFourier  
+    - name: TXTwoPointTheoryFourier
     - name: TXTwoPoint
       threads_per_process: 32
-    - name: TXBlinding
     - name: TXTwoPointFourier
       threads_per_process: 32
       #- name: TXBlinding
       #- name: TXTwoPointPlots
       #- name: TXMapPlots
-    - name: TXTwoPointTheoryReal
     - name: TXDiagnosticPlots
     - name: TXFourierGaussianCovariance
       threads_per_process: 32
     - name: TXTwoPointPlotsFourier
 # Where to put outputs
-output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs
+output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs_wide12h
 
 
 # configuration settings
-config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig.yml
+config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig_wide12h.yml
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
 
 inputs:
     # See README for paths to download these files
-    shear_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/shear_catalog_hsc_nonmetacal.h5
-    photometry_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_nonmetacal.h5
+    shear_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/shear_catalog_hsc_WIDE12H_nonmetacal.h5
+    photometry_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_WIDE12H_nonmetacal.h5
     photoz_trained_model: data/hsc/inputs/cosmoDC2_trees_i25.3.npy
     calibration_table: data/hsc/inputs/sample_cosmodc2_w10year_errors.dat
     exposures: data/hsc/inputs/exposures.hdf5

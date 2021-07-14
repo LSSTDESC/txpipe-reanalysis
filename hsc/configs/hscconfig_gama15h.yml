@@ -73,7 +73,7 @@ TXTruthLensSelector:
     # may also need one for r_cpar_cut
 
 TXExternalMask:
-    ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096.fits'
+    ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096_gama15h.fits'
 
 TXMainMaps:
     nside: 2048
@@ -127,17 +127,11 @@ TXNoiseMaps:
 
 TXTwoPointFourier:
     chunk_rows: 100000
-    nside: 2048
     flip_g2: True
     flip_g1: True
     ell_min: 300
     ell_max: 4096
     n_ell: 20
+    nside: 2048
     ell_edges: [100, 200, 300, 400, 500, 600, 700, 800, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
-    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'
-    deproject_syst_clustering: False
-    deproject_syst_weaklensing: False
-    systmaps_clustering_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/nc # use all maps in this directory
-    systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
-
-
+    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt_gama15h'

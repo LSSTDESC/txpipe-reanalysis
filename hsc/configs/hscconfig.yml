@@ -133,7 +133,7 @@ TXTwoPointFourier:
     ell_min: 300
     ell_max: 4096
     n_ell: 20
-    ell_edges: [100, 200, 300, 400, 500, 600, 700, 800, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
+    ell_edges: [100, 200, 300, 400, 600, 800, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
     cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'
     deproject_syst_clustering: False
     deproject_syst_weaklensing: False

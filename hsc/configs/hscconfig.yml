@@ -75,6 +75,7 @@ TXTruthLensSelector:
 TXCosmosWeight:
     mag_i_cut: 24.5
     n_neighbors: 10
+    mask_type: 'arcturus'
 
 TXPhotozDIR:
     pz_code: 'ephor_ab'

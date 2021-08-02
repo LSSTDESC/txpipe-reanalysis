@@ -72,6 +72,18 @@ TXTruthLensSelector:
     r_i_cut: 100
     # may also need one for r_cpar_cut
 
+TXCosmosWeight:
+    mag_i_cut: 24.5
+    n_neighbors: 10
+
+TXPhotozDIR:
+    pz_code: 'ephor_ab'
+    pz_mark: 'best'
+    source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
+    lens_zbin_edges: [0.15,0.5,0.75,1.0,1.5]
+    nz_bin_num: 200
+    nz_bin_max: 3.0
+
 TXExternalMask:
     ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096.fits'
 

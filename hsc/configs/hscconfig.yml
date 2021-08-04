@@ -80,9 +80,16 @@ TXPhotozDIR:
     pz_code: 'ephor_ab'
     pz_mark: 'best'
     source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
-    lens_zbin_edges: [0.15,0.5,0.75,1.0,1.5]
+    lens_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
     nz_bin_num: 200
     nz_bin_max: 3.0
+    hsc_cat_keys: ['gcmodel_mag', 'rcmodel_mag', 'icmodel_mag', 'zcmodel_mag',
+                     'ycmodel_mag', 'pz_mean_eab', 'pz_mode_eab', 'pz_best_eab',
+                     'pz_mc_eab', 'shear_cat'],
+    comb_cat_keys: ['ALPHA_J2000', 'DELTA_J2000', 'gcmodel_mag', 'rcmodel_mag',
+                      'icmodel_mag', 'zcmodel_mag', 'ycmodel_mag',
+                      'pz_best_eab', 'PHOTOZ', 'MNUV', 'MU', 'MB',
+                      'MV', 'MR', 'MI', 'MZ', 'MY', 'MJ', 'MH', 'MK']
 
 TXExternalMask:
     ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096.fits'

@@ -85,7 +85,7 @@ TXPhotozDIR:
     nz_bin_max: 3.0
     hsc_cat_keys: ['gcmodel_mag', 'rcmodel_mag', 'icmodel_mag', 'zcmodel_mag',
                      'ycmodel_mag', 'pz_mean_eab', 'pz_mode_eab', 'pz_best_eab',
-                     'pz_mc_eab', 'shear_cat'],
+                     'pz_mc_eab', 'shear_cat']
     comb_cat_keys: ['ALPHA_J2000', 'DELTA_J2000', 'gcmodel_mag', 'rcmodel_mag',
                       'icmodel_mag', 'zcmodel_mag', 'ycmodel_mag',
                       'pz_best_eab', 'PHOTOZ', 'MNUV', 'MU', 'MB',

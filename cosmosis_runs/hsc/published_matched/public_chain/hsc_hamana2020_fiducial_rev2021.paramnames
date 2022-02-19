@@ -1,0 +1,21 @@
+par_oc	\Omega_{c}
+par_as9	A_{s9}
+par_ob	\Omega_{b}
+par_ns	n_{s}
+par_h0	h_{0}
+par_aia	A_{IA}
+par_etaia	\eta_{IA}
+par_delz1	{\Delta z_1}
+par_delz2	{\Delta z_2}
+par_delz3	{\Delta z_3}
+par_delz4	{\Delta z_4}
+par_apsf	\alpha
+par_bpsf	\beta
+par_delm	{\Delta m}
+par_om*	\Omega_{m}
+par_sig8*	\sigma_{8}
+par_s8*	S_{8}
+par_s845*	S_{8-0.45}
+par_ov*	\Omega_{L}
+par_ts100*	\theta_{s}
+par_on*	\Omega_{\nu}

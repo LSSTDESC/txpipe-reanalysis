@@ -1,0 +1,73 @@
+# This larger run has nearly 79M galaxies in
+#launcher: cori-mini
+launcher:
+    name: mini
+    interval: 1.0
+
+# These site options tell the launcher to use shifter
+site:
+    name: local
+    volume: ${PWD}:/opt/txpipe
+
+
+modules: txpipe
+
+# where to find any modules that are not in this repo,
+# and any other code we need.
+python_paths:
+    - submodules/WLMassMap/python/desc/
+    - submodules/TJPCov
+    - submodules/FlexZPipe
+
+stages:
+    #- name: TXIngestRedmagic
+    - name: TXTruthLensSelector
+    - name: TXSourceSelector
+    - name: TXSourceMaps
+    - name: TXLensMaps
+    - name: TXAuxiliaryMaps
+    - name: TXSimpleMask
+    - name: TXDensityMaps
+    - name: TXMapPlots
+    - name: TXTracerMetadata
+    - name: TXRandomCat
+    - name: TXJackknifeCenters
+    - name: TXTwoPoint           # Compute real-space 2-point correlations
+    - name: TXBlinding           # Blind the data following Muir et al
+    - name: TXRealGaussianCovariance   # Compute covariance of real-space correlations
+#    - name: TXTwoPointFourier          # Compute power spectra C_ell
+#    - name: TXFourierGaussianCovariance # Compute the C_ell covariance
+# these last two also require namaster
+
+
+
+# Where to put outputs
+output_dir: /global/cscratch1/sd/elp25/TXPipe_data/LATEST/kids1000
+
+
+# configuration settings
+config: /global/u1/e/elp25/txpipe-reanalysis/kids-1000/configs/kids1000config.yml
+
+# On NERSC, set this before running:
+# export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
+
+inputs:
+    # See README for paths to download these files
+    shear_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/kids-1000/data/shear_catalog_kids1000.h5
+    photometry_catalog: /global/cscratch1/sd/elp25/txpipe-reanalysis/kids-1000/data/photometry_catalog_kids1000.h5
+    photoz_trained_model: data/kv450/inputs/cosmoDC2_trees_i25.3.npy
+    calibration_table: data/kv450/inputs/sample_cosmodc2_w10year_errors.dat
+    exposures: data/kv450/inputs/exposures.hdf5
+    # This file comes with the code
+    fiducial_cosmology: data/fiducial_cosmology.yml
+    shear_photoz_stack: /global/cscratch1/sd/elp25/txpipe-reanalysis/kids-1000/data/photoz_stack.hdf5
+    lens_photoz_stack: /global/cscratch1/sd/elp25/txpipe-reanalysis/kids-1000/data/photoz_stack_lens.hdf5
+
+# if supported by the launcher, restart the pipeline where it left off
+# if interrupted
+resume: True
+# where to put output logs for individual stages
+log_dir: data/kv450/logs
+# where to put an overall parsl pipeline log
+pipeline_log: data/kv450/log.txt
+

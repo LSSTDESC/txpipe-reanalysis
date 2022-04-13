@@ -31,28 +31,31 @@ stages:
     - name: TXSourceSelector
       nprocess: 32
     - name: TXTruthLensSelector
-      nprocess: 32  
+      nprocess: 32
     - name: TXTracerMetadata
     - name: TXAuxiliaryMaps
     - name: TXTrueNumberDensity
-    - name: TXRandomCat
-    - name: TXJackknifeCenters
+      #- name: TXRandomCat
+      #- name: TXJackknifeCenters
     - name: TXPhotozPlots
     - name: TXMainMaps
     - name: TXExternalMask
     - name: TXDensityMaps
     - name: TXNoiseMaps
     - name: TXTwoPointTheoryFourier
-    - name: TXTwoPoint
-      threads_per_process: 32
+      #- name: TXTwoPoint
+      #threads_per_process: 32
+      #- name: TXBlinding
     - name: TXTwoPointFourier
       threads_per_process: 32
       #- name: TXBlinding
       #- name: TXTwoPointPlots
       #- name: TXMapPlots
+      #- name: TXTwoPointTheoryReal
     - name: TXDiagnosticPlots
-    - name: TXFourierGaussianCovariance
-      threads_per_process: 32
+    - name: TXFourierNamasterCovariance
+      #- name: TXFourierGaussianCovariance
+      #threads_per_process: 32
     - name: TXTwoPointPlotsFourier
 # Where to put outputs
 output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs_wide12h
@@ -63,6 +66,11 @@ config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig_wide12h
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
+python_paths:
+    - submodules/WLMassMap/python/desc/
+    - submodules/TJPCov
+    - submodules/FlexZPipe
+    - submodules/RAIL
 
 inputs:
     # See README for paths to download these files

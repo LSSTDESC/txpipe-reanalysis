@@ -31,7 +31,7 @@ stages:
     - name: TXSourceSelector
       nprocess: 32
     - name: TXTruthLensSelector
-      nprocess: 32  
+      nprocess: 32
     - name: TXTracerMetadata
     - name: TXAuxiliaryMaps
     - name: TXTrueNumberDensity
@@ -42,7 +42,7 @@ stages:
     - name: TXExternalMask
     - name: TXDensityMaps
     - name: TXNoiseMaps
-    - name: TXTwoPointTheoryFourier  
+    - name: TXTwoPointTheoryFourier
       #- name: TXTwoPoint
       #threads_per_process: 32
       #- name: TXBlinding
@@ -53,16 +53,17 @@ stages:
       #- name: TXMapPlots
       #- name: TXTwoPointTheoryReal
     - name: TXDiagnosticPlots
-    - name: TXFourierNamasterCovariance  
+    - name: TXFourierNamasterCovariance
       #- name: TXFourierGaussianCovariance
       #threads_per_process: 32
     - name: TXTwoPointPlotsFourier
+
 # Where to put outputs
-output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs
+output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs_dep
 
 
 # configuration settings
-config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig.yml
+config: /global/homes/j/jsanch87/txpipe-reanalysis/hsc/configs/hscconfig_dep.yml
 
 # On NERSC, set this before running:
 # export DATA=${LSST}/groups/WL/users/zuntz/data/metacal-testbed
@@ -71,7 +72,6 @@ python_paths:
     - submodules/TJPCov
     - submodules/FlexZPipe
     - submodules/RAIL
-
 
 inputs:
     # See README for paths to download these files

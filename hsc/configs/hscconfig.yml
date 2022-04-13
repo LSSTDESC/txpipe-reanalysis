@@ -137,6 +137,7 @@ TXTwoPointFourier:
     cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt'
     deproject_syst_clustering: False
     deproject_syst_weaklensing: False
+    analytic_noise: True
     systmaps_clustering_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/nc # use all maps in this directory
     systmaps_weaklensing_dir: /global/cfs/cdirs/lsst/groups/LSS/HSC_data/systmaps/wl # use all maps in this directory
 

@@ -9,59 +9,93 @@ import numpy.random as random
 from astropy.table import Table, vstack
 import h5py as h5
 
-hscdir = '/global/cfs/cdirs/lsst/groups/LSS/HSC_data/'
+hscdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/catalogs_05_22/'
 
 def getdata(filename):
     hsc_shear = Table.read(hscdir + filename, memmap=True) 
     return hsc_shear
 
-hscfiles = ['HSC_WIDE_GAMA09H.fits',
-             'HSC_WIDE_GAMA15H.fits', 'HSC_WIDE_HECTOMAP.fits',
-             'HSC_WIDE_VVDS_part1.fits','HSC_WIDE_VVDS_part2.fits',
-             'HSC_WIDE_WIDE12H.fits','HSC_WIDE_XMM.fits']
-fields = ['GAMA09H'] #'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
+#fields = ['GAMA09H', 'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
+fields = ['HECTOMAP']
 tables = []
 print('loading data')
 for field in fields:
-    if field != 'VVDS':
-        d = getdata(f'HSC_WIDE_{field}.fits')
-    else:
-        d1 = getdata(f'HSC_WIDE_{field}_part1.fits')
-        d2 = getdata(f'HSC_WIDE_{field}_part2.fits')
-        d = vstack([d1, d2])
-    #tables.append(d)
-    #Joining the tables
-    #hsc_shearall = vstack(tables)
+    d = getdata(f'{field.lower()}_meas.fits')
     hsc_shearall = d
     ngal = len(hsc_shearall)
     print(f'Read {ngal} sources from field: {field}')
+    mask_check = (hsc_shearall['photoz_best'] >= 0.3) & (hsc_shearall['photoz_best'] <= 0.6)
+    print('z-cut', np.count_nonzero(mask_check))
     regauss_flag = (hsc_shearall['ishape_hsm_regauss_flags']==False)
-    regaus_sigma_nan = (hsc_shearall['ishape_hsm_regauss_sigma'] !=np.nan)
+    mask_check &= regauss_flag
+    print('regauss-flag', np.count_nonzero(mask_check))
+    regaus_sigma_nan = (np.isnan(hsc_shearall['ishape_hsm_regauss_sigma'])==False)
+    mask_check &= regaus_sigma_nan
+    print('regauss-sigma-nan', np.count_nonzero(mask_check))
     extendedness = (hsc_shearall['iclassification_extendedness']!=0)
-    flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=2)
+    mask_check &= extendedness
+    print('ext-cut', np.count_nonzero(mask_check))
+    flux_cmodel = (hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']>=10)
+    mask_check &= flux_cmodel
+    print('snr-i-cut', np.count_nonzero(mask_check))
     regauss_resolution = (hsc_shearall['ishape_hsm_regauss_resolution']>=0.3)
+    mask_check &= regauss_resolution
+    print('reso-cut', np.count_nonzero(mask_check))
     regauss_e = ((hsc_shearall['ishape_hsm_regauss_e1']**2+hsc_shearall['ishape_hsm_regauss_e2']**2)**(1/2)<2)
+    mask_check &= regauss_e
+    print('e1-e2-cut', np.count_nonzero(mask_check))
     efinite = (np.isfinite(hsc_shearall['ishape_hsm_regauss_e1'])) & (np.isfinite(hsc_shearall['ishape_hsm_regauss_e2']))
-    regauss_sigma_cut1 = (0<=hsc_shearall['ishape_hsm_regauss_sigma'])
+    mask_check &= efinite
+    print('finite-e-cut', np.count_nonzero(mask_check))
+    regauss_sigma_cut1 = (hsc_shearall['ishape_hsm_regauss_sigma'] >= 0)
+    mask_check &= regauss_sigma_cut1
+    print('sigma > 0 -cut', np.count_nonzero(mask_check))
     regauss_sigma_cut2 = (hsc_shearall['ishape_hsm_regauss_sigma']<=0.4)
+    mask_check &= regauss_sigma_cut2
+    print('sigma <= 0.4 -cut', np.count_nonzero(mask_check))
     imag_cut = (hsc_shearall['icmodel_mag']-hsc_shearall['a_i']<=27)
+    mask_check &= imag_cut
+    print('imag-cut', np.count_nonzero(mask_check))
     blendedness_abs_flux = (hsc_shearall['iblendedness_abs_flux']< 10**(-0.375))
-    gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err']>=2)
-    rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']>=2)
-    zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']>=2)
-    yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err']>=2)
-
+    mask_check &= blendedness_abs_flux
+    print('blendedness-cut', np.count_nonzero(mask_check))
+    gflux_cut = (hsc_shearall['gcmodel_flux']/hsc_shearall['gcmodel_flux_err'])>=5
+    rflux_cut = (hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err'])>=5
+    zflux_cut = (hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err'])>=5
+    yflux_cut = (hsc_shearall['ycmodel_flux']/hsc_shearall['ycmodel_flux_err'])>=5
+    snr_all = 1.0*(gflux_cut) + 1.0*(rflux_cut) + 1.0*(zflux_cut) + 1.0*(yflux_cut)
+    snr_all_cut = (snr_all >= 0.0)
+    mask_check &= snr_all_cut
+    print('snr-all-cut', np.count_nonzero(mask_check))
     ishape_hsm_regauss_e1_isnull = hsc_shearall['ishape_hsm_regauss_e1_isnull'] == False
+    mask_check &= ishape_hsm_regauss_e1_isnull
+    print('e1-isnull-cut', np.count_nonzero(mask_check))
     ishape_hsm_regauss_e2_isnull = hsc_shearall['ishape_hsm_regauss_e2_isnull'] == False
+    mask_check &= ishape_hsm_regauss_e2_isnull
+    print('e2-isnull-cut', np.count_nonzero(mask_check))
     ishape_hsm_regauss_derived_shape_weight_isnull = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] == False
+    mask_check &= ishape_hsm_regauss_derived_shape_weight_isnull
+    print('hsm_weight_isnull', np.count_nonzero(mask_check))
     ishape_hsm_regauss_derived_shear_bias_m_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m_isnull'] == False
+    mask_check &= ishape_hsm_regauss_derived_shear_bias_m_isnull
+    print('hsm-m-isnull', np.count_nonzero(mask_check))
     ishape_hsm_regauss_derived_shear_bias_c1_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1_isnull'] == False
+    mask_check &= ishape_hsm_regauss_derived_shear_bias_c1_isnull
+    print('hsm-c1-isnull', np.count_nonzero(mask_check))
     ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False
+    mask_check &= ishape_hsm_regauss_derived_shear_bias_c2_isnull
+    print('hsm-c2-isnull', np.count_nonzero(mask_check))
     ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False
+    mask_check &= ishape_hsm_regauss_derived_sigma_e_isnull
+    print('hsm-sigma-e-isnull', np.count_nonzero(mask_check))
 
-    all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (gflux_cut) & (rflux_cut) & (zflux_cut) & (yflux_cut) & (imag_cut) & (efinite)
+    all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (snr_all_cut) & (imag_cut) & (efinite)
+    mask_check = (hsc_shearall['photoz_best'] >= 0.3) & (hsc_shearall['photoz_best'] <= 0.6)
+    print('rechecking cuts', np.count_nonzero(mask_check))
+    print('all-cuts', np.count_nonzero((all_cuts) & (mask_check)))
     null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
-
+    print('null-cuts', np.count_nonzero((null_cuts) & (mask_check)))
+    print('all+null-cuts', np.count_nonzero((null_cuts) & (all_cuts) & (mask_check)))
     hsc_shearall = hsc_shearall[all_cuts&null_cuts]
 
     #Sorting by ID
@@ -78,8 +112,8 @@ for field in fields:
     g2 = hsc_shearall['ishape_hsm_regauss_e2']
     mag_err_i    = hsc_shearall['icmodel_mag_err'] 
     mag_err_r    = hsc_shearall['rcmodel_mag_err']
-    mag_i    = hsc_shearall['icmodel_mag']     
-    mag_r    = hsc_shearall['rcmodel_mag'] 
+    mag_i    = hsc_shearall['icmodel_mag'] - hsc_shearall['a_i']     
+    mag_r    = hsc_shearall['rcmodel_mag'] - hsc_shearall['a_r']
     psf_T_mean = hsc_shearall['ishape_hsm_psfmoments_11']+ hsc_shearall['ishape_hsm_psfmoments_22']
     # Conversion of moments to e1, e2
     Ixx = hsc_shearall['ishape_hsm_psfmoments_11']
@@ -90,12 +124,13 @@ for field in fields:
     e2 = 2*Ixy / T
     psf_g1     = e1      
     psf_g2     = e2      
-    s2n        = 1.086/hsc_shearall['icmodel_mag_err']        
-    mean_z          = hsc_shearall['pz_best_eab'] 
+    s2n        = hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']        
+    mean_z = hsc_shearall['photoz_best']
+    #mean_z          = hsc_shearall['pz_best_eab'] 
     objectId        = hsc_shearall['object_id']    
     ra              = hsc_shearall['ra']
-    snr_i           = 1.086/mag_err_i
-    snr_r           = 1.086/mag_err_r
+    snr_i           = hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']
+    snr_r           = hsc_shearall['rcmodel_flux']/hsc_shearall['rcmodel_flux_err']
     weight = hsc_shearall['ishape_hsm_regauss_derived_shape_weight']
     m = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_m']
     c1 = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c1']
@@ -112,11 +147,11 @@ for field in fields:
     data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z, flag]
 
     dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true', 'wl_fulldepth_fullcolor']
-
+    print(f'Selected {len(dec)} objects')
     outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
-    print('saving file, ',outputdir + f'shear_catalog_hsc_{field}_nonmetacal.h5')
+    print('saving file, ',outputdir + f'shear_catalog_hsc_{field}_nonmetacal_05_22.h5')
 
-    f = h5.File(outputdir + f'shear_catalog_hsc_{field}_nonmetacal.h5', 'w')
+    f = h5.File(outputdir + f'shear_catalog_hsc_{field}_nonmetacal_05_22.h5', 'w')
     g = f.create_group('shear')
     for i in range(len(data)):
         g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)

@@ -20,7 +20,7 @@ https://www.overleaf.com/9264561458qbqwnkfswtqd
 https://docs.google.com/presentation/d/1aUWz_GH6qGwQwfuZHeki_iAFnejr1vbv6Vck8QDcqVg/edit?usp=sharing
 
 ## Cosmosis Chains 
-https://www.dropbox.com/sh/b365wkr7m5w7k4t/AAChu-2nzGdRiNrS8WM7vMfGa?dl=0
+https://www.dropbox.com/home/Final-TXPipe-Reanalysis-Chains
 
 ## Usage
 

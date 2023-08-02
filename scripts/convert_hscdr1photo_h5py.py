@@ -27,8 +27,8 @@ def getdata(filename):
 #    print('loaded data')
     #Joining the tables
 #hsc_shearall = vstack(tables)
-#fields = ['GAMA09H', 'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
-fields = ['HECTOMAP']
+fields = ['GAMA09H', 'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
+#fields = ['HECTOMAP']
 tables = []
 print('loading data')
 for field in fields:
@@ -69,8 +69,12 @@ for field in fields:
     ishape_hsm_regauss_derived_shear_bias_c2_isnull = hsc_shearall['ishape_hsm_regauss_derived_shear_bias_c2_isnull'] == False 
     ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False 
 
+    # cuts for shear below
     all_cuts = (regauss_flag) & (regaus_sigma_nan) & (extendedness) & (flux_cmodel) & (regauss_resolution) & (regauss_e) & (regauss_sigma_cut1) & (regauss_sigma_cut2) & (blendedness_abs_flux) & (snr_all_cut) & (imag_cut) & (efinite)
     null_cuts = (ishape_hsm_regauss_e1_isnull) & (ishape_hsm_regauss_e2_isnull) & (ishape_hsm_regauss_derived_shape_weight_isnull) & (ishape_hsm_regauss_derived_shear_bias_m_isnull) & (ishape_hsm_regauss_derived_shear_bias_c1_isnull) & (ishape_hsm_regauss_derived_shear_bias_c2_isnull) &  (ishape_hsm_regauss_derived_sigma_e_isnull)
+    # cuts for clustering below
+    #all_cuts = (extendedness) & (flux_cmodel) & (blendedness_abs_flux) & (snr_all==4)
+    #null_cuts = hsc_shearall['wl_fulldepth_fullcolor'] == True
     mask_check = (hsc_shearall['photoz_best'] >= 0.3) & (hsc_shearall['photoz_best'] <= 0.6) & (all_cuts)
     print('bin 0 + all-cuts', np.count_nonzero((mask_check) & (null_cuts)))
     hsc_shearall = hsc_shearall[all_cuts&null_cuts]
@@ -118,9 +122,9 @@ for field in fields:
 
     print('saving file')
     #Saving the h5 file...
-    outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
+    outputdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/2023_reanalysis/'
     #f = h5.File(outputdir + 'hsc_photometry_catalog_'+hscfile[:-5]+'.hdf5', 'w')
-    f = h5.File(outputdir + f'photometry_catalog_hsc_{field}_nonmetacal_05_22.h5', 'w')
+    f = h5.File(outputdir + f'photometry_sourcecatalog_hsc_{field}_nonmetacal_05_22.h5', 'w')
     g = f.create_group('photometry')
     for i in range(len(data)):
         g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)

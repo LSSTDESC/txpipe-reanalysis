@@ -37,20 +37,27 @@ modules: txpipe
         #- submodules/TJPCov
         #- submodules/FlexZPipe
 stages:
-    - name: TXSourceSelector
+    - name: TXSourceSelectorHSC
       nprocess: 32
     - name: TXTruthLensSelector
       nprocess: 32
+    - name: TXSourceTrueNumberDensity
+    - name: TXLensTrueNumberDensity
+      #- name: TXLensCatalogSplitter
     - name: TXTracerMetadata
-    - name: TXAuxiliaryMaps
-    - name: TXTrueNumberDensity
+    - name: TXShearCalibration
+    - name: TXAuxiliarySourceMaps
+    - name: TXAuxiliaryLensMaps
+      #- name: TXTrueNumberDensity
       #- name: TXRandomCat
       #- name: TXJackknifeCenters
-    - name: TXPhotozPlots
-    - name: TXMainMaps
+      #- name: TXPhotozPlots
     - name: TXExternalMask
+    - name: TXLensMaps
+    - name: TXSourceMaps
     - name: TXDensityMaps
-    - name: TXNoiseMaps
+    - name: TXSourceNoiseMaps
+    - name: TXLensNoiseMaps
     - name: TXTwoPointTheoryFourier
       #- name: TXTwoPoint
       #threads_per_process: 32
@@ -61,14 +68,16 @@ stages:
       #- name: TXTwoPointPlots
       #- name: TXMapPlots
       #- name: TXTwoPointTheoryReal
-    - name: TXDiagnosticPlots
+    - name: TXSourceDiagnosticPlots
+    - name: TXLensDiagnosticPlots
     - name: TXFourierNamasterCovariance
+      threads_per_process: 32
       #- name: TXFourierGaussianCovariance
       #threads_per_process: 32
     - name: TXTwoPointPlotsFourier
 
 # Where to put outputs
-output_dir: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/outputs_gama09h
+output_dir: /pscratch/sd/j/jsanch87/txpipe-reanalysis/hsc/outputs_gama09h
 
 
 # configuration settings
@@ -84,8 +93,8 @@ python_paths:
 
 inputs:
     # See README for paths to download these files
-    shear_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/shear_catalog_hsc_GAMA09H_nonmetacal.h5
-    photometry_catalog: /global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/photometry_catalog_hsc_GAMA09H_nonmetacal.h5
+    shear_catalog: /global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/2023_reanalysis/shear_sourcecatalog_hsc_GAMA09H_nonmetacal_05_22.h5
+    photometry_catalog: /global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/2023_reanalysis/photometry_lenscatalog_hsc_GAMA09H_nonmetacal_08_23.h5
     photoz_trained_model: data/hsc/inputs/cosmoDC2_trees_i25.3.npy
     calibration_table: data/hsc/inputs/sample_cosmodc2_w10year_errors.dat
     exposures: data/hsc/inputs/exposures.hdf5

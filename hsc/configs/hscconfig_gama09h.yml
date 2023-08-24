@@ -2,30 +2,30 @@
 PZPDFMLZ:
     nz: 301
     zmax: 3.0
-    chunk_rows: 100000
+    chunk_rows: 1000000
 
 TXPhotozStack:
-    chunk_rows: 100000
+    chunk_rows: 1000000
     
 TXPhotozPlots:
     plot_src: True
     plot_lens: False
 
-TXSourceSelector:
-    bands: ri #used for selection
+TXSourceSelectorHSC:
+    bands: i #used for selection
     T_cut: 0.0
-    s2n_cut: 10.0
-    max_rows: 1000
+    s2n_cut: 0.0
+    max_rows: 1000000
     delta_gamma: 0.02
     #source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
     source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
-    chunk_rows: 100000
+    chunk_rows: 1000000
     nsrc: 4
     nlens: 0
     # lens selection
     select_lens: False
     apply_flag_cut: True
-    shear_catalog_type: 'lensfit'
+    shear_catalog_type: 'hsc'
     shear_prefix: ''
     input_pz: True
     i_hi_cut: 24.5
@@ -35,79 +35,53 @@ TXSourceSelector:
     true_z: True
     # may also need one for r_cpar_cut
 
-TXHSCSourceSelector:
-    bands: ri #used for selection
-    T_cut: 0.0
-    s2n_cut: 10.0
-    max_rows: 1000
-    delta_gamma: 0.02
-    #source_zbin_edges: [0.15, 0.5, 0.75, 1.0, 1.5]
-    source_zbin_edges: [0.3, 0.6, 0.9, 1.2, 1.5]
-    chunk_rows: 100000
-    nsrc: 4
-    nlens: 0
-    # lens selection
-    select_lens: False
-    apply_flag_cut: True
-    shear_catalog_type: 'hsc'
-    shear_prefix: ''
-    input_pz: True
-    i_hi_cut: 24.5
-    r_hi_cut: 99
-    i_lo_cut: 0
-    r_lo_cut: 0
-    true_z: True
-    # may also need one for r_cpar_cut
 
 TXTruthLensSelector:
     # Mag cuts
-    chunk_rows: 100000
+    chunk_rows: 1000000
     lens_zbin_edges: [0.15,0.5,0.75,1.0,1.5]
-    cperp_cut: 100
+    cperp_cut: 100.
     r_cpar_cut: 100
-    r_lo_cut: 0
-    r_hi_cut: 30
-    i_lo_cut: 0
+    r_lo_cut: 0.
+    r_hi_cut: 99.
+    i_lo_cut: 0.
     i_hi_cut: 24.5
-    r_i_cut: 100
+    r_i_cut: 100.
     # may also need one for r_cpar_cut
 
 TXExternalMask:
-    ext_mask: '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/masked_fraction_nside4096_gama09h.fits'
+    ext_mask: '/global/cfs/projectdirs/lsst/groups/LSS/HSC_data/masked_fraction_nside4096_gama09h.fits'
 
 TXMainMaps:
     nside: 2048
 
-TXTwoPoint:
-    binslop: 0.1
-    delta_gamma: 0.02
-    do_pos_pos: True
-    min_sep: 0.316
-    max_sep: 316
-    nbins: 31
-    do_shear_shear: True
-    do_shear_pos: True
-    flip_g2: False
-    m_from_cat: True
-    c_from_cat: True
-    shear_catalog_type: 'hsc'
-    # use true when using metacal shears
-    verbose: 0
-TXTrueNumberDensity:
+TXLensMaps:
+  nside: 2048
+
+TXSourceMaps:
+  nside: 2048
+
+TXLensTrueNumberDensity:
     zmax: 3
     nz: 301
-    
-TXAuxiliaryMaps:
-    snr_threshold: 10
+
+TXSourceTrueNumberDensity:
+    zmax: 3
+    nz: 301
+
+TXLensAuxiliaryMaps:
+    snr_threshold: 0.
+TXSourceAuxiliaryMaps:
+    snr_threshold: 0.
 
 TXDiagnosticPlots:
     shear_prefix: ''
     psf_prefix: 'psf_'    
 
-    TXDiagnosticMaps:
-    chunk_rows: 100000  # Number of rows to process at once
+TXLensDiagnosticMaps:
+    chunk_rows: 100000 0 # Number of rows to process at once
     sparse: True  # Generate sparse maps - faster if using small areas
-    snr_threshold: 10.0
+    snr_threshold: 0.0
     snr_delta: 1.0
     pixelization: healpix
     nside: 2048
@@ -121,12 +95,12 @@ TXDiagnosticPlots:
     npix_y: 60
     shear_type: 'hsc'
 
-TXNoiseMaps:
+TXSourceNoiseMaps:
     shear_prefix: ''
     shear_catalog_type: 'hsc'
 
 TXTwoPointFourier:
-    chunk_rows: 100000
+    chunk_rows: 1000000
     flip_g2: True
     flip_g1: True
     ell_min: 300
@@ -134,5 +108,5 @@ TXTwoPointFourier:
     n_ell: 20
     nside: 2048
     ell_edges: [100, 200, 300, 400, 600, 800, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
-    cache_dir: '/global/cscratch1/sd/jsanch87/cache_nmt_gama09h'
+    cache_dir: '/global/pscratch/sd/jsanch87/cache_nmt_gama09h'
     analytic_noise: True

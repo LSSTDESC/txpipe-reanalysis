@@ -15,8 +15,8 @@ def getdata(filename):
     hsc_shear = Table.read(hscdir + filename, memmap=True) 
     return hsc_shear
 
-#fields = ['GAMA09H', 'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
-fields = ['HECTOMAP']
+fields = ['GAMA09H', 'GAMA15H', 'HECTOMAP', 'VVDS', 'WIDE12H', 'XMM']
+#fields = ['HECTOMAP']
 tables = []
 print('loading data')
 for field in fields:
@@ -148,10 +148,10 @@ for field in fields:
 
     dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true', 'wl_fulldepth_fullcolor']
     print(f'Selected {len(dec)} objects')
-    outputdir = '/global/cscratch1/sd/jsanch87/txpipe-reanalysis/hsc/data/'
-    print('saving file, ',outputdir + f'shear_catalog_hsc_{field}_nonmetacal_05_22.h5')
+    outputdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/2023_reanalysis/'
+    print('saving file, ',outputdir + f'shear_sourcecatalog_hsc_{field}_nonmetacal_05_22.h5')
 
-    f = h5.File(outputdir + f'shear_catalog_hsc_{field}_nonmetacal_05_22.h5', 'w')
+    f = h5.File(outputdir + f'shear_sourcecatalog_hsc_{field}_nonmetacal_05_22.h5', 'w')
     g = f.create_group('shear')
     for i in range(len(data)):
         g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)

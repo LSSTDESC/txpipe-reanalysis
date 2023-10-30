@@ -106,7 +106,7 @@ for field in fields:
     print('getting columns')
 
     dec        = hsc_shearall['dec']              
-    T     = hsc_shearall['ishape_hsm_moments_11']+hsc_shearall['ishape_hsm_moments_22']                   
+    Tgal     = hsc_shearall['ishape_hsm_moments_11']+hsc_shearall['ishape_hsm_moments_22']                   
     flags = hsc_shearall['ishape_hsm_regauss_derived_shape_weight_isnull'] # hsm regauss failures
     g1 = hsc_shearall['ishape_hsm_regauss_e1']
     g2 = hsc_shearall['ishape_hsm_regauss_e2']
@@ -119,11 +119,11 @@ for field in fields:
     Ixx = hsc_shearall['ishape_hsm_psfmoments_11']
     Iyy = hsc_shearall['ishape_hsm_psfmoments_22']
     Ixy = hsc_shearall['ishape_hsm_psfmoments_12']
-    T = Ixx + Iyy
-    e1 = (Ixx - Iyy) / T
-    e2 = 2*Ixy / T
-    psf_g1     = e1      
-    psf_g2     = e2      
+    psf_T_mean = Ixx + Iyy
+    e1_psf = (Ixx - Iyy) / psf_T_mean
+    e2_psf = 2*Ixy / psf_T_mean
+    psf_g1     = e1_psf      
+    psf_g2     = e2_psf      
     s2n        = hsc_shearall['icmodel_flux']/hsc_shearall['icmodel_flux_err']        
     mean_z = hsc_shearall['photoz_best']
     #mean_z          = hsc_shearall['pz_best_eab'] 
@@ -144,7 +144,7 @@ for field in fields:
     #region   = np.array([a.encode('utf8') for a in region])
 
     #Saving the data as h5file
-    data = [dec, T, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z, flag]
+    data = [dec, Tgal, flags, g1, g2, mag_err_i, mag_err_r, mag_i, mag_r, psf_T_mean, psf_g1, psf_g2, s2n, mean_z, objectId, ra, snr_i, snr_r, weight, m, c1, c2, sigma_e, weight, mean_z, flag]
 
     dnames = ['dec', 'T', 'flags', 'g1', 'g2', 'mag_err_i', 'mag_err_r', 'mag_i', 'mag_r', 'psf_T_mean', 'psf_g1', 'psf_g2', 's2n', 'mean_z', 'objectId', 'ra','snr_i', 'snr_r', 'lensfit_weight', 'm', 'c1', 'c2', 'sigma_e', 'weight', 'redshift_true', 'wl_fulldepth_fullcolor']
     print(f'Selected {len(dec)} objects')

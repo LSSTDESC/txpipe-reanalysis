@@ -4,6 +4,10 @@ launcher:
     name: mini
     interval: 1.0
 
+#site:
+#    name: cori-interactive
+#    image: ghcr.io/lsstdesc/txpipe
+
 # These site options tell the launcher to use shifter
 #site:
 #    shifter: joezuntz/txpipe-dev
@@ -18,13 +22,13 @@ launcher:
     #    max_threads: ${SLURM_JOB_NUM_NODES}
 site:
     name: local
-    # Number of jobs to run at once.  Default as shown.
-    max_threads: 32
+#    # Number of jobs to run at once.  Default as shown.
+#    max_threads: 32
     # These are available for every site.  The default is not to use them:
     # docker/shifter image
-    #image: joezuntz/txpipe
+    #    image: joezuntz/txpipe
     #docker/shifter volume mounting
-    volume: ${PWD}:/opt/txpipe 
+    #volume: ${PWD}:/opt/txpipe 
 
 # modules and packages to import that have pipeline
 # stages defined in them
@@ -32,10 +36,11 @@ modules: txpipe
 
 # where to find any modules that are not in this repo,
 # and any other code we need.
-#python_paths:
-        #    - submodules/WLMassMap/python/desc/
-        #- submodules/TJPCov
-        #- submodules/FlexZPipe
+python_paths:
+        - submodules/WLMassMap/python/desc/
+        - submodules/TJPCov
+        - submodules/FlexZPipe
+        - submodules/RAIL
 stages:
     - name: TXSourceSelectorHSC
       nprocess: 32
@@ -43,15 +48,10 @@ stages:
       nprocess: 32
     - name: TXSourceTrueNumberDensity
     - name: TXLensTrueNumberDensity
-      #- name: TXLensCatalogSplitter
     - name: TXTracerMetadata
     - name: TXShearCalibration
     - name: TXAuxiliarySourceMaps
     - name: TXAuxiliaryLensMaps
-      #- name: TXTrueNumberDensity
-      #- name: TXRandomCat
-      #- name: TXJackknifeCenters
-      #- name: TXPhotozPlots
     - name: TXExternalMask
     - name: TXLensMaps
     - name: TXSourceMaps
@@ -70,14 +70,14 @@ stages:
       #- name: TXTwoPointTheoryReal
     - name: TXSourceDiagnosticPlots
     - name: TXLensDiagnosticPlots
-    - name: TXFourierNamasterCovariance
+    - name: TXFourierTJPCovariance  
       threads_per_process: 32
       #- name: TXFourierGaussianCovariance
       #threads_per_process: 32
     - name: TXTwoPointPlotsFourier
 
 # Where to put outputs
-output_dir: /pscratch/sd/j/jsanch87/txpipe-reanalysis/hsc/outputs_gama09h
+output_dir: /global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/output_2023
 
 
 # configuration settings

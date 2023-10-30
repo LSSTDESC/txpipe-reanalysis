@@ -108,5 +108,5 @@ TXTwoPointFourier:
     n_ell: 20
     nside: 2048
     ell_edges: [100, 200, 300, 400, 600, 800, 1000, 1400, 1800, 2200, 3000, 3800, 4600] #, 6200 , 7800, 9400, 12600, 15800]
-    cache_dir: '/global/pscratch/sd/jsanch87/cache_nmt_gama09h'
+    cache_dir: '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/output_2023/cache_nmt_gama09h'
     analytic_noise: True

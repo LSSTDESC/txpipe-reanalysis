@@ -5,17 +5,17 @@ import h5py as h5
 import numpy as np
 
 #hscdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/catalogs_05_22/'
-hscdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/lens_sample_2023/'
+hscdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/lens_sample_2023_pdr1/'
 
 def getdata(filename):
     hsc_photometry = Table.read(hscdir + filename, memmap=True) 
     return hsc_photometry 
-
+pdr1=True
 fields = ['GAMA09H', 'GAMA15H', 'VVDS', 'WIDE12H', 'XMM']
 tables = []
 print('loading data')
 for field in fields:
-    d = getdata(f'{field.lower()}_davidcuts.fits')
+    d = getdata(f'{field.lower()}_pdr1.fits')
     hsc_shearall = d
     ngal = len(hsc_shearall)
     print(f'Read {ngal} sources from field: {field}')
@@ -38,8 +38,14 @@ for field in fields:
     #ishape_hsm_regauss_derived_sigma_e_isnull = hsc_shearall['ishape_hsm_regauss_derived_sigma_e_isnull'] == False 
 
     all_cuts = (extendedness) & (flux_cmodel) & (blendedness_abs_flux) & (snr_all>=2) & (imag_cut)
-    null_cuts = hsc_shearall['wl_fulldepth_fullcolor'] == True
-    mask_check = (hsc_shearall['pz_best_eab'] >= 0.15) & (hsc_shearall['pz_best_eab'] <= 1.5) & (all_cuts)
+    if not pdr1:
+        null_cuts = hsc_shearall['wl_fulldepth_fullcolor'] == True
+    else:
+        null_cuts = np.ones(len(hsc_shearall), dtype=bool)
+    if not pdr1:
+        mask_check = (hsc_shearall['pz_best_eab'] >= 0.15) & (hsc_shearall['pz_best_eab'] <= 1.5) & (all_cuts)
+    else:
+        mask_check = all_cuts
     print('bin 0 + all-cuts', np.count_nonzero((mask_check) & (null_cuts)))
     hsc_shearall = hsc_shearall[all_cuts&null_cuts]
 
@@ -72,10 +78,16 @@ for field in fields:
     z_mag_err = hsc_shearall['zcmodel_mag_err'] #Placeholder
     snr_z     = hsc_shearall['zcmodel_flux']/hsc_shearall['zcmodel_flux_err']           #Placeholder
     mean_z          = hsc_shearall['pz_best_eab']
-    sigma_e = hsc_shearall['ishape_hsm_regauss_derived_rms_e']
+    if not pdr1:
+        sigma_e = hsc_shearall['ishape_hsm_regauss_derived_rms_e']
+    else:
+        sigma_e = np.ones(len(hsc_shearall))*-99.0
     redshift_true = hsc_shearall['pz_best_eab']
     extendedness = hsc_shearall['iclassification_extendedness']
-    flag = hsc_shearall['wl_fulldepth_fullcolor']
+    if not pdr1:
+        flag = hsc_shearall['wl_fulldepth_fullcolor']
+    else:
+        flag = np.ones(len(hsc_shearall), dtype=bool)
     print('loaded columns')
     #Dealing with unicode, string needs to be S12
     #objectId = np.array([a.encode('utf8') for a in objectId])
@@ -87,7 +99,7 @@ for field in fields:
     print('saving file')
     #Saving the h5 file...
     outputdir = '/global/cfs/projectdirs/lsst/groups/LSS/HSC_reanalysis/data_javi/2023_reanalysis/'
-    f = h5.File(outputdir + f'photometry_lenscatalog_hsc_{field}_nonmetacal_08_23.h5', 'w')
+    f = h5.File(outputdir + f'photometry_lenscatalog_hsc_{field}_nonmetacal_pdr1.h5', 'w')
     g = f.create_group('photometry')
     for i in range(len(data)):
         g.create_dataset(dnames[i], data=data[i], dtype=data[i].dtype)
